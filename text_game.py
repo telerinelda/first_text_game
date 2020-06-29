@@ -176,17 +176,17 @@ def find_location():
 def tg_play_sound(sound_type = "neutral"):
     sound_file = ""
     if sound_type == "neutral":
-        sound_file = "neutral" + choice(["1","2","3"]) + ".Wav"
+        sound_file = "sounds/neutral" + choice(["1","2","3"]) + ".Wav"
     elif sound_type == "unsuccessful":
-        sound_file = "unsuccessful" + choice(["1","2","3"]) + ".Wav"
+        sound_file = "sounds/unsuccessful" + choice(["1","2","3"]) + ".Wav"
     elif sound_type == "success":
-        sound_file = "success1.Wav"
+        sound_file = "sounds/success1.Wav"
     elif sound_type == "zelda":
-        sound_file = "Zeldasound.Wav"
+        sound_file = "sounds/Zeldasound.Wav"
     elif sound_type == "death":
-        sound_file = "death.Wav"
+        sound_file = "sounds/death.Wav"
     elif sound_type == "victory":
-        sound_file = "victory.Wav"
+        sound_file = "sounds/victory.Wav"
     if sound_file != "" and sound_toggle:
         tg.playSound(sound_file)
 #tg_play_sound("zelda")
