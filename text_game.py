@@ -4,8 +4,7 @@ from random import choice
 # Generic Text Game Engine by Kevin Hughes
 
 # some initial values
-progress = set()  # you can add values here to keep track of the player's progress through the game.
-inventory = []  # the player's inventory.
+progress = set()  # you can add values here to keep track of the player's progress through the game. might change how game progress works later when I tackle that.
 object_dictionary = dict()
 pathways_dictionary = dict()
 game_name = "Put the name of the game here"
