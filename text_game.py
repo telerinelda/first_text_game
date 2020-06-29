@@ -10,9 +10,9 @@ object_dictionary = dict()
 pathways_dictionary = dict()
 game_name = "Put the name of the game here"
 player_location = "ROOM1"  # name of the starting location
-help_text = "HELP:\nThis is a text-based game. You can play by entering commands in the command line.  Common " \
+help_text = "HELP:\n\nThis is a text-based game. You can play by entering commands in the command line.  Common " \
             "commands are phrases like 'look at', 'pick up', or 'use'. Most commands need an object. Try typing 'Look" \
-            " at room'. "
+            " at room'.  \n\n'mute' or 'unmute' will turn the game sounds on or off."
 about_text = "The About button prints this."
 command_list = [] #each command entered by the player goes here and then we analyze it.
 special_verbs = dict()
@@ -303,6 +303,7 @@ def game():
     global object_dictionary
     global pathways_dictionary
     global command_counter
+    global sound_toggle
 
     #tg.tg_play_sound("neutral1.wav")
 
@@ -506,6 +507,15 @@ def game():
         command_counter -= 1  # cancel out timer increment
     elif strip_off(["ABOUT"]):
         press("   About   ")
+        command_counter -= 1  # cancel out timer increment
+    elif strip_off(["MUTE"]) or strip_off(["TURN","SOUND","OFF"]) or strip_off(["TURN","SOUNDS","OFF"]):
+        sound_toggle = False
+        tgprint("Game sounds have been turned off.")
+        command_counter -= 1  # cancel out timer increment
+    elif strip_off(["UNMUTE"])or strip_off(["TURN","SOUND","ON"]) or strip_off(["TURN","SOUNDS","ON"]):
+        sound_toggle = True
+        tgprint("Game sounds have been turned on.")
+        tg_play_sound("success")
         command_counter -= 1  # cancel out timer increment
 
 #
