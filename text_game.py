@@ -4,6 +4,7 @@ from random import choice
 # Generic Text Game Engine by Kevin Hughes
 
 # some initial values
+sound_toggle = True #later user will be able to change this.
 progress = set()  # you can add values here to keep track of the player's progress through the game. might change how game progress works later when I tackle that.
 object_dictionary = dict()
 pathways_dictionary = dict()
@@ -186,7 +187,7 @@ def tg_play_sound(sound_type = "neutral"):
         sound_file = "death.Wav"
     elif sound_type == "victory":
         sound_file = "victory.Wav"
-    if sound_file != "":
+    if sound_file != "" and sound_toggle:
         tg.playSound(sound_file)
 #tg_play_sound("zelda")
 
@@ -196,6 +197,7 @@ def tg_play_sound(sound_type = "neutral"):
 # ---------------------------------------------------------------------------------------------
 #  Sample Location 1:
 room1 = tgPlace("ROOM1")
+#the object room1 will rarely be used by that handle.  instead we call it with object_dictionary("ROOM1")
 room1.look_text = {"default": "You look at room number 1.  It's pretty simple."}
 #room1.room_look_text = {"default": ""}  # Not needed for locations
 room1.pick_up_text = {"default": "You would like to pick up the room but it's kinda too big."}
