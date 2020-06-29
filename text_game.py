@@ -501,6 +501,12 @@ def game():
                 command_fail()
         else:
             command_fail()
+    elif strip_off(["HELP"]):
+        press("   Help   ")
+        command_counter -= 1  # cancel out timer increment
+    elif strip_off(["ABOUT"]):
+        press("   About   ")
+        command_counter -= 1  # cancel out timer increment
 
 #
 #   TOTAL FAIL
