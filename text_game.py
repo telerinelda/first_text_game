@@ -291,6 +291,7 @@ special_verbs["ATTACK"] = "SWORD"
 #   Finally, this is the part where we interpret what the player typed in the command line
 # ---------------------------------------------------------------------------------------------
 def command_fail():
+    global command_counter
     tgprint("I'm sorry. I don't understand the command you entered.")
     tg_play_sound("unsuccessful")
     command_counter -= 1 #this command didn't increment the counter.
@@ -301,6 +302,7 @@ def game():
     global player_location
     global object_dictionary
     global pathways_dictionary
+    global command_counter
 
     #tg.tg_play_sound("neutral1.wav")
 
