@@ -3,8 +3,6 @@ from random import choice
 
 # Generic Text Game Engine by Kevin Hughes
 
-#testing git with this comment...
-
 # some initial values
 progress = set()  # you can add values here to keep track of the player's progress through the game.
 inventory = []  # the player's inventory.
@@ -16,9 +14,10 @@ help_text = "HELP:\nThis is a text-based game. You can play by entering commands
             "commands are phrases like 'look at', 'pick up', or 'use'. Most commands need an object. Try typing 'Look" \
             " at room'. "
 about_text = "The About button prints this."
-command_list = []
+command_list = [] #each command entered by the player goes here and then we analyze it.
 special_verbs = dict()
-command_counter = 0
+command_counter = 0 #this increments with each semi-successful command.
+
 #this can be used to set up events that occur after a certain number of commands.  The wait command will advance the
 #command counter until the next event in the scheduled events dictionary.
 scheduled_events = dict()
@@ -45,7 +44,7 @@ class tgThing:
     dropa_text = {"default": "default drop text."}
     go_to_text = {"default": "default go to"}
 
-    #other objects may be able to be located in, on, or under this object.  So we can set up a sublocation:
+    #other objects may be able to be located in, on, or under this object.  So we can set up a sublocation: (sublocation programming is incomplete)
     num_sublocations = 0 #should always equal len of the two below strings
     sublocation_preposition = [] #values like "UNDER" or "ON" that the user can use
     sublocation_text = [] #values like "under the bed" for building phrases about the place.
@@ -99,7 +98,6 @@ tg.addLabelEntry("input")
 tg.setLabel("input", "Enter Command: ")
 tg.setSticky("ns")
 
-
 def press(button):
     global command_list
     global command_counter
@@ -131,8 +129,6 @@ tg.setFocus("input")
 # this bit makes the Submit button get activated if you press the enter key
 def ent():
     press("   Submit   ")
-
-
 tg.enableEnter(ent)
 
 
@@ -285,6 +281,9 @@ special_verbs["HIT"] = "HAMMER"
 #other examples
 special_verbs["LIGHT"] = "MATCHES"
 special_verbs["ATTACK"] = "SWORD"
+
+
+
 
 
 # ---------------------------------------------------------------------------------------------
