@@ -4,7 +4,7 @@ from random import choice
 # Generic Text Game Engine by Kevin Hughes
 
 # some initial values
-sound_toggle = True #later user will be able to change this.
+sound_toggle = True 
 progress = set()  # you can add values here to keep track of the player's progress through the game. might change how game progress works later when I tackle that.
 object_dictionary = dict()
 pathways_dictionary = dict()
