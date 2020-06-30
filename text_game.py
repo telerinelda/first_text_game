@@ -1,6 +1,8 @@
 from appJar import gui
 from random import choice
 
+from game import Thing, Place, Pathway
+
 # Generic Text Game Engine by Kevin Hughes
 
 # some initial values
@@ -22,66 +24,12 @@ command_counter = 0 #this increments with each semi-successful command.
 #command counter until the next event in the scheduled events dictionary.
 scheduled_events = dict()
 
-# this class is the generic data structure of an object or location in the game.
-class tgThing:
-    location = "nowhere"
-    sublocation = ""
-    can_pick_up = False
-    is_transitive = False  # does it need a direct object to be used?
-    is_location = False  # is this thing the room itself?
-
-    def __init__(self, obj_name):
-        self.name = obj_name
-        object_dictionary[obj_name] = self  # this allows access to the object through the dictionary.
-        # it does NOT create a copy of the object.  It's like a pointer.
-
-    # a thing needs response texts for when it is addressed by a command.  This is a dictionary where there
-    # is a "default" text and other texts can be stored for use according the progress indicator.
-    look_text = {"default": "Default Look Text."}
-    room_look_text = {"default": "Default object in room text."}
-    pick_up_text = {"default": "default pick up text."}
-    use_text = {"default": "default use text."}
-    dropa_text = {"default": "default drop text."}
-    go_to_text = {"default": "default go to"}
-
-    #other objects may be able to be located in, on, or under this object.  So we can set up a sublocation: (sublocation programming is incomplete)
-    num_sublocations = 0 #should always equal len of the two below strings
-    sublocation_preposition = [] #values like "UNDER" or "ON" that the user can use
-    sublocation_text = [] #values like "under the bed" for building phrases about the place.
-    sublocation_hidden = [] #booleans True if you can't see the sublocation just by gazing on the object itself.
-
-
-# here's a subclass that is for locations (ie rooms).
-class tgPlace(tgThing):
-    def __init__(self, obj_name):
-        self.name = obj_name
-        self.location = self.name
-        self.is_location = True
-        self.room_look_text = {"default":""}
-        object_dictionary[obj_name] = self  # this allows access to the object through the dictionary.
-        # it does NOT create a copy of the object.  It's like a pointer.
-
-# here's a subclass that is for pathways connecting rooms: doorways, hallways that don't need to be locations.
-class tgPathway(tgThing):
-    def __init__(self, obj_name):
-        self.name = obj_name
-        object_dictionary[obj_name] = self
-        pathways_dictionary[obj_name] = self
-    location2 = "NOWHERE" #this variable will always be the room the player is NOT in (they swap when he moves)
-    pathway_open = True #can you pass through?
-    def switch(self):
-        #this is a method for reversing the locations when you enter the room.  location2 is always the "other" location.
-        self.location, self.location2 = self.location2, self.location
-    look_thru_text = dict() #If the player tries to peer through the pathway to the next room or location.
-    
-
 # this is a function that returns a boolean value if a certain object is present
 def is_present(obj_name):
     if object_dictionary[obj_name].location == player_location or object_dictionary[obj_name].location == "INVENTORY":
         return True
     else:
         return False
-
 
 # Here we are setting up the GUI window using Appjar
 tg = gui(game_name, "1000x600")
@@ -196,7 +144,7 @@ def tg_play_sound(sound_type = "neutral"):
 #  Game Objects and Locations
 # ---------------------------------------------------------------------------------------------
 #  Sample Location 1:
-room1 = tgPlace("ROOM1")
+room1 = Place("ROOM1")
 #the object room1 will rarely be used by that handle.  instead we call it with object_dictionary("ROOM1")
 room1.look_text = {"default": "You look at room number 1.  It's pretty simple."}
 #room1.room_look_text = {"default": ""}  # Not needed for locations
@@ -204,21 +152,23 @@ room1.pick_up_text = {"default": "You would like to pick up the room but it's ki
 room1.use_text = {"default": "You are using the room as a room to stand in I guess."}
 #room1.drop_text = {"default": ""}  # This is only needed if you can put it in your inventory.
 room1.go_to_text = {"default": "You enter room # 1."}
+object_dictionary[room1.name] = room1
 
 #  Sample Location 2:
-room2 = tgPlace("ROOM2")
+room2 = Place("ROOM2")
 room2.look_text = {"default": "You look at room number 2.  It's pretty simple."}
 #room2.room_look_text = {"default": ""}  # Not needed for locations
 room2.pick_up_text = {"default": "You would like to pick up the room but it's kinda too big."}
 room2.use_text = {"default": "You are using the room as a room to stand in I guess."}
 #room2.drop_text = {"default": ""}  # This is only needed if you can put it in your inventory.
 room2.go_to_text = {"default": "You enter room # 2."}
+object_dictionary[room2.name] = room2
 
 # list connections between locations here. (DNU! old way)
 #connections = [{"ROOM1", "ROOM2"}]
 
 #sample doorway:
-door = tgPathway("DOOR")
+door = Pathway("DOOR")
 door.location = "ROOM1"
 door.location2 = "ROOM2"
 door.look_text = {"ROOM1":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room2.",
@@ -229,10 +179,12 @@ door.go_to_text = {"default":"You approach the door..."}
 door.look_thru_text = {"ROOM1":"Beyond the door is room2.  You can make out a wooden table.",
                        "ROOM2":"Beyond the door is room1.  You don't see any people or large objects."}
 #door.use_text = {} #not needed for pathways.
+object_dictionary[door.name] = door
+pathways_dictionary[door.name] = door
 
 
 #  Sample Object: a rock you can pick up:
-rock = tgThing("ROCK")
+rock = Thing("ROCK")
 rock.location = "ROOM1"
 rock.can_pick_up = True
 rock.look_text = {"default": "You look at the rock.  It is grey and hard, about the size of a baseball."}
@@ -241,9 +193,11 @@ rock.pick_up_text = {"default": "You pick up the rock."}
 rock.use_text = {"default": "You can't think of anything to use the rock for at the moment."}
 rock.drop_text = {"default": "You drop the rock.  It makes a sound like PLERK as it hits the ground."}
 rock.go_to_text = {"default": "You approach the rock.  It does not respond."}
+object_dictionary[rock.name] = rock
+
 
 #  Sample Object: a table that remains stationary
-table = tgThing("TABLE")
+table = Thing("TABLE")
 table.location = "ROOM2"
 table.can_pick_up = False #this isn't needed because by default you can't pick up objects
 table.look_text = {"default": "You are looking at a medium size table made of dark brown wood.  It is old and heavy."}
@@ -252,6 +206,7 @@ table.pick_up_text = {"default": "The table is too heavy to pick up."}
 table.use_text = {"default": "You lean against the table and ponder your life choices."}
 #table.drop_text = {} #not needed since you can't pick it up in the first place.
 table.go_to_text = {"default": "You approach the table.  It does not react."}
+object_dictionary[table.name] = table
 
 #  Sublocation example:  We make "on the table" a place you can put things.
 table.sublocation_hidden.append(False) #True if the user must look there before he's aware of ojects there
@@ -261,7 +216,7 @@ table.num_sublocations = len(table.sublocation_hidden) #always run this after ad
 
 
 #  Sample Transitive Object: a hammer is a transitive object.  to use it you must use it ON something.
-hammer = tgThing("HAMMER")
+hammer = Thing("HAMMER")
 hammer.is_transitive = True
 hammer.location = "ROOM1"
 hammer.can_pick_up = True
@@ -272,6 +227,7 @@ hammer.use_text = {"default": "Thunk!",
                    "ROCK": "You carefully aim the hammer and strike the rock.  Crack!  The rock does not break."}
 hammer.drop_text = {"default": "You place the hammer down."}
 hammer.go_to_text = {"default": "You approach the hammer.  It does not respond."}
+object_dictionary[hammer.name] = hammer
 
 #add special verbs that can only be used if you have a certain object.  The dictionary returns the object name.
 # The user must provide the target.
