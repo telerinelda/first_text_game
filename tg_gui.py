@@ -1,4 +1,6 @@
 from appJar import gui
+from random import choice
+
 def setup_gui(game_name,help_text,about_text,game_func):
     # Here we are setting up the GUI window using Appjar
     tg = gui(game_name, "1000x600")
