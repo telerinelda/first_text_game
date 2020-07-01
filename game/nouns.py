@@ -1,6 +1,5 @@
 # this class is the generic data structure of an object or location in the game.
 class Thing:
-
     def __init__(self, obj_name):
         self.name = obj_name
 
