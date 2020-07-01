@@ -1,6 +1,5 @@
 from appJar import gui
-
-def setup_gui(game_name):
+def setup_gui(game_name,help_text,about_text,game_func):
     # Here we are setting up the GUI window using Appjar
     tg = gui(game_name, "1000x600")
     tg.setPadding([20,20])
@@ -15,43 +14,38 @@ def setup_gui(game_name):
     tg.addLabelEntry("input")
     tg.setLabel("input", "Enter Command: ")
     tg.setSticky("ns")
+
+    def press(button):
+        #global command_list
+        #global command_counter
+        if button == "   Exit   ":
+            tg.stop()
+        elif button == "   Help   ":
+            # help stuff here.
+            tg.setMessage("console", help_text)
+            #tg_play_sound("neutral")
+            tg.setFocus("input")
+        elif button == "   About   ":
+            tg.setMessage("console", about_text)
+            #tg_play_sound("neutral")
+        elif button == "   Submit   ":
+            tg.setMessage("console",game_func(tg.getEntry("input")))
+            tg.setEntry("input", "")
+            tg.setFocus("input")
+        else:
+            print("this shouldn't happen")
+
+    def ent():
+        press("   Submit   ")
+    tg.enableEnter(ent)
+
     tg.addButtons(["   Submit   ", "   Help   ", "   About   ", "   Exit   "], press)
     tg.setFocus("input")
     # this bit makes the Submit button get activated if you press the enter key
-    tg.enableEnter(press("   Submit   "))
 
     return tg
 
-
-def press(button):
-    if button == "   Exit   ":
-        tg.stop()
-    elif button == "   Help   ":
-        # help stuff here.
-        tg.setMessage("console", "set up help text later")
-        tg_play_sound("neutral")
-        tg.setFocus("input")
-    elif button == "   About   ":
-        tg.setMessage("console", "set up about text later")
-        tg_play_sound("neutral")
-    elif button == "   Submit   ":
-        user_input = tg.getEntry("input")
-        #command_counter += 1
-        #command_list = user_input.upper().replace(".","").replace(",","").split()
-        #command_list[:] = [x for x in command_list if x not in ["A","THE"]] #remove fluff
-        #game()  # this function call evaluates the input and reacts to it.
-        tg.setEntry("input", "")
-        tg.setFocus("input")
-    else:
-        print("this shouldn't happen")
-
-# Here's a function that makes it slightly easier to display text in the main message location
-def tgprint(print_text):
-    #prev = tg.getMessage("console")
-    #tg.setMessage("console", prev + "\n\n" + print_text)
-    tg.setMessage("console", print_text)
-
-def tg_play_sound(sound_type = "neutral"):
+def play_sound(tg,sound_type = "neutral"):
     sound_file = ""
     if sound_type == "neutral":
         sound_file = "sounds/neutral" + choice(["1","2","3"]) + ".Wav"
@@ -65,6 +59,5 @@ def tg_play_sound(sound_type = "neutral"):
         sound_file = "sounds/death.Wav"
     elif sound_type == "victory":
         sound_file = "sounds/victory.Wav"
-    if sound_file != "" and sound_toggle:
+    if sound_file != "":
         tg.playSound(sound_file)
-#tg_play_sound("zelda")
