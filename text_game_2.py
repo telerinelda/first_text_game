@@ -1,12 +1,11 @@
-from appJar import gui
 from random import choice
-
+import tg_gui
 from game import Thing, Place, Pathway
 
 # Generic Text Game Engine by Kevin Hughes
 
 # some initial values
-sound_toggle = True 
+sound_toggle = True
 progress = set()  # you can add values here to keep track of the player's progress through the game. might change how game progress works later when I tackle that.
 object_dictionary = dict()
 pathways_dictionary = dict()
@@ -31,62 +30,6 @@ def is_present(obj_name):
     else:
         return False
 
-# Here we are setting up the GUI window using Appjar
-tg = gui(game_name, "1000x600")
-tg.setPadding([20,20])
-tg.setStretch("both")
-tg.setSticky("ewns")
-tg.setBg("burlywood4")
-tg.addMessage("console", "This game is powered By Generic Text Game Engine, by Kevin Hughes")
-tg.setMessageBg("console","PaleGreen1")
-tg.setMessageWidth("console",960)
-#tg.setStretch("none")
-tg.setSticky("ew")
-tg.addLabelEntry("input")
-tg.setLabel("input", "Enter Command: ")
-tg.setSticky("ns")
-
-def press(button):
-    global command_list
-    global command_counter
-    if button == "   Exit   ":
-        tg.stop()
-    elif button == "   Help   ":
-        # help stuff here.
-        tg.setMessage("console", help_text)
-        tg_play_sound("neutral")
-        tg.setFocus("input")
-    elif button == "   About   ":
-        tg.setMessage("console", about_text)
-        tg_play_sound("neutral")
-    elif button == "   Submit   ":
-        user_input = tg.getEntry("input")
-        command_counter += 1
-        command_list = user_input.upper().replace(".","").replace(",","").split()
-        command_list[:] = [x for x in command_list if x not in ["A","THE"]] #remove fluff
-        game()  # this function call evaluates the input and reacts to it.
-        tg.setEntry("input", "")
-        tg.setFocus("input")
-    else:
-        print("this shouldn't happen")
-
-tg.addButtons(["   Submit   ", "   Help   ", "   About   ", "   Exit   "], press)
-tg.setFocus("input")
-
-
-# this bit makes the Submit button get activated if you press the enter key
-def ent():
-    press("   Submit   ")
-tg.enableEnter(ent)
-
-
-# Here's a function that makes it slightly easier to display text in the main message location
-def tgprint(print_text):
-    #prev = tg.getMessage("console")
-    #tg.setMessage("console", prev + "\n\n" + print_text)
-    tg.setMessage("console", print_text)
-
-
 # this function is used to parse the user command a word or phrase at a time If it finds what it's looking for it
 # returns True and strips the identified words off of the front of the command list.
 def strip_off(checklist):
@@ -96,7 +39,6 @@ def strip_off(checklist):
         return True
     else:
         return False
-
 
 # this function returns true if the command list begins with an object that is present
 def find_obj():
@@ -120,24 +62,6 @@ def find_location():
     else:
         return False
 
-
-def tg_play_sound(sound_type = "neutral"):
-    sound_file = ""
-    if sound_type == "neutral":
-        sound_file = "sounds/neutral" + choice(["1","2","3"]) + ".Wav"
-    elif sound_type == "unsuccessful":
-        sound_file = "sounds/unsuccessful" + choice(["1","2","3"]) + ".Wav"
-    elif sound_type == "success":
-        sound_file = "sounds/success1.Wav"
-    elif sound_type == "zelda":
-        sound_file = "sounds/Zeldasound.Wav"
-    elif sound_type == "death":
-        sound_file = "sounds/death.Wav"
-    elif sound_type == "victory":
-        sound_file = "sounds/victory.Wav"
-    if sound_file != "" and sound_toggle:
-        tg.playSound(sound_file)
-#tg_play_sound("zelda")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -238,8 +162,6 @@ special_verbs["HIT"] = "HAMMER"
 #other examples
 special_verbs["LIGHT"] = "MATCHES"
 special_verbs["ATTACK"] = "SWORD"
-
-
 
 
 
@@ -482,9 +404,6 @@ def game():
     else:
         #only executes if there's no text on the command line:
         command_counter -= 1 #cancel out timer increment
-
-
-
 
 
 #
