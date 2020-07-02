@@ -1,16 +1,11 @@
-from appJar import gui
-from random import choice
-
-from game import Thing, Place, Pathway
-
-# Generic Text Game Engine by Kevin Hughes
+from game import Thing, Place, Pathway, tg_gui
 
 # some initial values
-sound_toggle = True 
+game_name = "test game name"
+sound_toggle = False
 progress = set()  # you can add values here to keep track of the player's progress through the game. might change how game progress works later when I tackle that.
 object_dictionary = dict()
 pathways_dictionary = dict()
-game_name = "Put the name of the game here"
 player_location = "ROOM1"  # name of the starting location
 help_text = "HELP:\n\nThis is a text-based game. You can play by entering commands in the command line.  Common " \
             "commands are phrases like 'look at', 'pick up', or 'use'. Most commands need an object. Try typing 'Look" \
@@ -19,6 +14,7 @@ about_text = "The About button prints this."
 command_list = [] #each command entered by the player goes here and then we analyze it.
 special_verbs = dict()
 command_counter = 0 #this increments with each semi-successful command.
+console_output = ""
 
 #this can be used to set up events that occur after a certain number of commands.  The wait command will advance the
 #command counter until the next event in the scheduled events dictionary.
@@ -31,62 +27,6 @@ def is_present(obj_name):
     else:
         return False
 
-# Here we are setting up the GUI window using Appjar
-tg = gui(game_name, "1000x600")
-tg.setPadding([20,20])
-tg.setStretch("both")
-tg.setSticky("ewns")
-tg.setBg("burlywood4")
-tg.addMessage("console", "This game is powered By Generic Text Game Engine, by Kevin Hughes")
-tg.setMessageBg("console","PaleGreen1")
-tg.setMessageWidth("console",960)
-#tg.setStretch("none")
-tg.setSticky("ew")
-tg.addLabelEntry("input")
-tg.setLabel("input", "Enter Command: ")
-tg.setSticky("ns")
-
-def press(button):
-    global command_list
-    global command_counter
-    if button == "   Exit   ":
-        tg.stop()
-    elif button == "   Help   ":
-        # help stuff here.
-        tg.setMessage("console", help_text)
-        tg_play_sound("neutral")
-        tg.setFocus("input")
-    elif button == "   About   ":
-        tg.setMessage("console", about_text)
-        tg_play_sound("neutral")
-    elif button == "   Submit   ":
-        user_input = tg.getEntry("input")
-        command_counter += 1
-        command_list = user_input.upper().replace(".","").replace(",","").split()
-        command_list[:] = [x for x in command_list if x not in ["A","THE"]] #remove fluff
-        game()  # this function call evaluates the input and reacts to it.
-        tg.setEntry("input", "")
-        tg.setFocus("input")
-    else:
-        print("this shouldn't happen")
-
-tg.addButtons(["   Submit   ", "   Help   ", "   About   ", "   Exit   "], press)
-tg.setFocus("input")
-
-
-# this bit makes the Submit button get activated if you press the enter key
-def ent():
-    press("   Submit   ")
-tg.enableEnter(ent)
-
-
-# Here's a function that makes it slightly easier to display text in the main message location
-def tgprint(print_text):
-    #prev = tg.getMessage("console")
-    #tg.setMessage("console", prev + "\n\n" + print_text)
-    tg.setMessage("console", print_text)
-
-
 # this function is used to parse the user command a word or phrase at a time If it finds what it's looking for it
 # returns True and strips the identified words off of the front of the command list.
 def strip_off(checklist):
@@ -96,7 +36,6 @@ def strip_off(checklist):
         return True
     else:
         return False
-
 
 # this function returns true if the command list begins with an object that is present
 def find_obj():
@@ -120,24 +59,6 @@ def find_location():
     else:
         return False
 
-
-def tg_play_sound(sound_type = "neutral"):
-    sound_file = ""
-    if sound_type == "neutral":
-        sound_file = "sounds/neutral" + choice(["1","2","3"]) + ".Wav"
-    elif sound_type == "unsuccessful":
-        sound_file = "sounds/unsuccessful" + choice(["1","2","3"]) + ".Wav"
-    elif sound_type == "success":
-        sound_file = "sounds/success1.Wav"
-    elif sound_type == "zelda":
-        sound_file = "sounds/Zeldasound.Wav"
-    elif sound_type == "death":
-        sound_file = "sounds/death.Wav"
-    elif sound_type == "victory":
-        sound_file = "sounds/victory.Wav"
-    if sound_file != "" and sound_toggle:
-        tg.playSound(sound_file)
-#tg_play_sound("zelda")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -240,256 +161,277 @@ special_verbs["LIGHT"] = "MATCHES"
 special_verbs["ATTACK"] = "SWORD"
 
 
-
-
-
-# ---------------------------------------------------------------------------------------------
-#   Finally, this is the part where we interpret what the player typed in the command line
-# ---------------------------------------------------------------------------------------------
-def command_fail():
-    global command_counter
-    tgprint("I'm sorry. I don't understand the command you entered.")
-    tg_play_sound("unsuccessful")
-    command_counter -= 1 #this command didn't increment the counter.
-
-def game():
-
-    global command_list
+#--------------------------------------------------------------------------------
+#
+#          The Game Function
+#
+#--------------------------------------------------------------------------------
+def game_func(command_input):
+    # this function receives the input and returns a text output to display.
     global player_location
     global object_dictionary
     global pathways_dictionary
     global command_counter
     global sound_toggle
+    global command_list
+    global console_output
 
-    #tg.tg_play_sound("neutral1.wav")
+    def tot_fail():
+        global console_output
+        nonlocal output_type
+        #couldn't understand the command at all
+        console_output += "I'm sorry, I didn't understand the command."
+        output_type = "unsuccessful"
 
-    #
-    #       LOOK AT
-    #
-    if strip_off(["LOOK", "AT"]) or strip_off(["WATCH"]):
-        if find_obj():
-            if not object_dictionary[command_list[0]].is_location:
-                # the thing we're looking at is an object, not a location.
-                # if it is a pathway we modulate the description based on which location we're in
-                if command_list[0] in pathways_dictionary:
-                    tgprint(pathways_dictionary[command_list[0]].look_text[player_location])
-                    tg_play_sound("neutral")
-                else:
-                    #otherwise we just print the default description:
-                    tgprint(object_dictionary[command_list[0]].look_text["default"])
-                    tg_play_sound("neutral")
-            else:
-                # look at the whole room.
-                room_text = object_dictionary[command_list[0]].look_text["default"]
-                for obj in object_dictionary:
-                    if object_dictionary[obj].location == player_location: #this excludes the inventory
-                        room_text += "\n" + object_dictionary[obj].room_look_text["default"]
-                tgprint(room_text)
-                tg_play_sound("neutral")
-        elif command_list[0] == "INVENTORY":
-            inv_text = "Here's a list of the things in your inventory:\n"
-            for obj in object_dictionary:
-                if object_dictionary[obj].location == "INVENTORY":
-                    inv_text += obj.lower() + "\n"
-            tgprint(inv_text)
-            tg_play_sound("neutral")
-        elif find_location():
-            for obj in pathways_dictionary:
-                if pathways_dictionary[obj].location == player_location and pathways_dictionary[obj].location2 == command_list[0]:
-                    tgprint(pathways_dictionary[obj].look_thru_text[player_location])
-                    tg_play_sound("neutral")
-                    break
-            else:
-                command_fail()
-        else:
-            tgprint("I didn't recognize the name of what you're trying to look at.")
-            tg_play_sound("unsuccessful")
+    if len(command_input): #skipping this on an errant entry key will reprint the same message as previous
+        command_counter += 1 #gets reversed later if the command is invalid.
+        console_output = "" #everything below adds to this and then it gets returned.
+        output_type = "neutral" #default response type.
+        command_list = command_input.upper().replace(".", "").replace(",", "").split()
+        command_list[:] = [x for x in command_list if x not in ["A", "THE"]]  # remove fluff
+        loop_again = True
+        while loop_again:
+            loop_again = False #sometimes we'll set this to True below if we need to retranslate the command.
 
-    #
-    #       PICK UP
-    #
-    elif strip_off(["PICK", "UP"]) or strip_off(["GET"]) or strip_off(["TAKE"]):
-        if find_obj():
-            if object_dictionary[command_list[0]].location != "INVENTORY":
-                if object_dictionary[command_list[0]].can_pick_up:
-                    object_dictionary[command_list[0]].location = "INVENTORY"
-                    tg_play_sound("success")
-                else:
-                    tg_play_sound("unsuccessful")  # can't pick up item
-                # either way there should be something here:
-                tgprint(object_dictionary[command_list[0]].pick_up_text["default"])
-
-            else:
-                tgprint("You already have that.")
-                tg_play_sound("unsuccessful")
-        else:
-            tgprint("I don't recognize the name of what you're trying to obtain.")
-            tg_play_sound("unsuccessful")
-
-    elif strip_off(["PUT", "DOWN"]) or strip_off(["DROP"]) or strip_off(["THROW", "AWAY"]):
-        if find_obj():
-            if object_dictionary[command_list[0]].location == "INVENTORY":
-                object_dictionary[command_list[0]].location = player_location
-                tgprint(object_dictionary[command_list[0]].drop_text["default"])
-                tg_play_sound("neutral")
-            else:
-                # tried to drop something not in inventory
-                tgprint("That object is not in your inventory so you can't put it down.")
-                tg_play_sound("unsuccessful")
-        else:
-            tgprint("I don't recognize the name of what you're trying to get rid of.")
-            tg_play_sound("unsuccessful")
-
-    #
-    #       TRAVEL!
-    #
-    elif strip_off(["GO", "TO"]) or strip_off(["WALK", "TO"]) or strip_off(["ENTER"]) or strip_off(["GO","INTO"]):
-        if find_obj(): #this only searches the current location and the inventory
-            if not object_dictionary[command_list[0]].is_location:
-                # user said go to an object rather than a location
-                tgprint(object_dictionary[command_list[0]].go_to_text["default"])
-                tg_play_sound("neutral")
-            else:
-                # since location matches, you tried to go to where you are!
-                tgprint("You are already there.")
-                tg_play_sound("unsuccessful")
-        elif find_location(): #next check outside the current location for other locations
-            for obj in pathways_dictionary:
-                if pathways_dictionary[obj].location == player_location and pathways_dictionary[obj].location2 == command_list[0] and pathways_dictionary[obj].pathway_open:
-                    #found a way in so
-                    #put player in new location
-                    player_location = command_list[0]
-                    tgprint(object_dictionary[command_list[0]].go_to_text["default"])
-                    tg_play_sound("success")
-                    #switch locations on pathway objects with location2 = new location
-                    for pathway in pathways_dictionary:
-                        if pathways_dictionary[pathway].location2 == player_location:
-                            pathways_dictionary[pathway].switch()
-                    break
-            else:
-                #this is skipped if we found a way in through any pathway.
-                tgprint("I recognize the place you mentioned but you can't get there from here.")
-                tg_play_sound("unsuccessful")
-        else:
-            tgprint("I'm sorry, I don't recognize the name of where you're trying to go.")
-            tg_play_sound("unsuccessful")
-
-#
-#       USE AN OBJECT!
-#
-    elif strip_off(["USE"]):
-        if find_obj():# and object_dictionary[command_list[0]].location == "INVENTORY":
-            object1 = command_list[0]
-            #if object_dictionary[object1].can_pick_up:
-                #object_dictionary[object1].location = "INVENTORY" #the silent pick up
-            del command_list[0]
-            if object_dictionary[object1].is_transitive:
-                if object_dictionary[object1].location == "INVENTORY":
-                    if strip_off(["ON"]) or strip_off(["WITH"]):
-                        if find_obj():
-                            object2 = command_list[0]
-                            if object2 in object_dictionary[object1].use_text:
-                                tgprint(object_dictionary[object1].use_text[object2])
-                                tg_play_sound("neutral")
-                            else:
-                                tgprint(object_dictionary[object1].use_text["default"])
-                                tg_play_sound("neutral")
+            #
+            #       LOOK AT
+            #
+            if strip_off(["LOOK", "AT"]) or strip_off(["WATCH"]):
+                if find_obj():
+                    if not object_dictionary[command_list[0]].is_location:
+                        # the thing we're looking at is an object, not a location.
+                        # if it is a pathway we modulate the description based on which location we're in
+                        if command_list[0] in pathways_dictionary:
+                            console_output += pathways_dictionary[command_list[0]].look_text[player_location]
                         else:
-                            tgprint("I don't recognize the target of that action.")
-                            tg_play_sound("unsuccessful")
+                            # otherwise we just print the default description:
+                            console_output += object_dictionary[command_list[0]].look_text["default"]
                     else:
-                        tgprint("That object needs a target (a direct object) to be used.  Try using it 'on' or 'with' something else that is present.")
-                        tg_play_sound("unsuccessful")
+                        # we're looking at a location
+                        console_output += object_dictionary[command_list[0]].look_text["default"]
+                        for obj in object_dictionary:
+                            if object_dictionary[obj].location == player_location:  # this excludes the inventory
+                                console_output += "\n"
+                                console_output += object_dictionary[obj].room_look_text["default"]
+                elif command_list[0] == "INVENTORY":
+                    console_output += "Here's a list of the things in your inventory:\n"
+                    for obj in object_dictionary:
+                        if object_dictionary[obj].location == "INVENTORY":
+                            console_output += obj.lower()
+                            console_output += "\n"
+                elif find_location():
+                    #we're looking at a location that is not the player location.
+                    for obj in pathways_dictionary:
+                        if pathways_dictionary[obj].location == player_location and pathways_dictionary[obj].location2 == command_list[0]:
+                            #found a pathway to that place so we can in fact look at it.
+                            console_output += pathways_dictionary[obj].look_thru_text[player_location]
+                            break #stop looking for a path since we found one.
+                    else:
+                        #tried to look at a location we don't have a direct pathway to
+                        tot_fail()
                 else:
-                    tgprint("You need to pick up that object to use it.")
-                    tg_play_sound("unsuccessful")
-            else:
-                #object doesn't need a target to be used, so we just print the use text
-                if object1 in pathways_dictionary:
-                    #we're going to retranslate "use door" as "go to door's second location:
-                    command_list = ["GO","TO",pathways_dictionary[object1].location2]
-                    game()
+                    console_output += "I didn't recognize the name of what you're trying to look at."
+                    output_type = "unsuccessful"
+
+            #
+            #       PICK UP
+            #
+            elif strip_off(["PICK", "UP"]) or strip_off(["GET"]) or strip_off(["TAKE"]):
+                if find_obj():
+                    if object_dictionary[command_list[0]].location != "INVENTORY":
+                        if object_dictionary[command_list[0]].can_pick_up:
+                            object_dictionary[command_list[0]].location = "INVENTORY"
+                            output_type = "success"
+                        else:
+                            output_type = "unsuccessful"
+                        # either way there should be something here:
+                        console_output += object_dictionary[command_list[0]].pick_up_text["default"]
+                    else:
+                        #tried to pick up something in the inventory.
+                        console_output += "You already have that."
+                        output_type = "unsuccessful"
                 else:
-                    tgprint(object_dictionary[object1].use_text["default"])
-                    tg_play_sound("neutral")
-        else:
-            tgprint("I don't recognize what object you're trying to use.")
-            tg_play_sound("unsuccessful")
+                    console_output += "I don't recognize the name of what you're trying to obtain."
+                    output_type = "unsuccessful"
 
-    #
-    #   SPECIAL VERBS
-    #
-    elif len(command_list) and command_list[0] in special_verbs:
-        object1 = special_verbs[command_list[0]]
-        del command_list[0]
-        if find_obj():
-            object2 = command_list[0]
-            command_list = ["USE",object1,"WITH",object2]
-            game()
-        else:
-            if object_dictionary[object1].location == "INVENTORY":
-                tgprint("That command needs a target (a direct object).  Try again with one of the objects that is present.")
-                tg_play_sound("unsuccessful")
+            #
+            #       DROP
+            #
+            elif strip_off(["PUT", "DOWN"]) or strip_off(["DROP"]) or strip_off(["THROW", "AWAY"]):
+                if find_obj():
+                    if object_dictionary[command_list[0]].location == "INVENTORY":
+                        object_dictionary[command_list[0]].location = player_location
+                        console_output += object_dictionary[command_list[0]].drop_text["default"]
+                    else:
+                        # tried to drop something not in inventory
+                        console_output += "That object is not in your inventory so you can't put it down."
+                        output_type = "unsuccessful"
+                else:
+                    console_output += "I don't recognize the name of what you're trying to get rid of."
+                    output_type = "unsuccessful"
+
+            #
+            #       TRAVEL!
+            #
+            elif strip_off(["GO", "TO"]) or strip_off(["WALK", "TO"]) or strip_off(["ENTER"]) or strip_off(["GO", "INTO"]) or strip_off(["APPROACH"]):
+                if find_obj():  # this only searches the current location and the inventory
+                    if not object_dictionary[command_list[0]].is_location:
+                       # user said go to an object rather than a location
+                       console_output += object_dictionary[command_list[0]].go_to_text["default"]
+                    else:
+                        # since location matches, you tried to go to where you are!
+                        console_output += "You are already there."
+                        output_type = "unsuccessful"
+                elif find_location():  # next check outside the current location for other locations
+                    for obj in pathways_dictionary:
+                        if pathways_dictionary[obj].location == player_location and pathways_dictionary[obj].location2 == command_list[0] and pathways_dictionary[obj].pathway_open:
+                            # found a way in so
+                            # put player in new location
+                            player_location = command_list[0]
+                            output_type = "success"
+                            console_output += object_dictionary[command_list[0]].go_to_text["default"]
+                            # switch locations on pathway objects with location2 = new location
+                            for pathway in pathways_dictionary:
+                                if pathways_dictionary[pathway].location2 == player_location:
+                                    pathways_dictionary[pathway].switch()
+                            break #this break causes us to skip the for:else clause immediately following.
+                    else:
+                        # this is skipped if we found a way in through any pathway.
+                        console_output += "I recognize the place you mentioned but you can't get there from here."
+                        output_type = "unsuccessful"
+                else:
+                    console_output += "I'm sorry, I don't recognize the name of where you're trying to go."
+                    output_type = "unsuccessful"
+
+            #
+            #       USE AN OBJECT!
+            #
+            elif strip_off(["USE"]):
+                if find_obj():  # and object_dictionary[command_list[0]].location == "INVENTORY":
+                    object1 = command_list[0]
+                    # if object_dictionary[object1].can_pick_up:
+                        # object_dictionary[object1].location = "INVENTORY" #the silent pick up
+                    del command_list[0]
+                    if object_dictionary[object1].is_transitive:
+                        if object_dictionary[object1].location == "INVENTORY":
+                            if strip_off(["ON"]) or strip_off(["WITH"]):
+                                if find_obj():
+                                    object2 = command_list[0]
+                                    if object2 in object_dictionary[object1].use_text:
+                                        console_output += object_dictionary[object1].use_text[object2]
+                                        output_type = "success"
+                                    else:
+                                        #no designated use text for the target
+                                        console_output += object_dictionary[object1].use_text["default"]
+                                else:
+                                    console_output += "I don't recognize the target of that action."
+                                    output_type = "unsuccessful"
+                            else:
+                                console_output += "That object needs a target (a direct object) to be used.  Try using it 'on' or 'with' something else that is present."
+                                output_type = "unsuccessful"
+                        else:
+                            console_output += "You need to pick up that object to use it."
+                            output_type = "unsuccessful"
+                    else:
+                        # object doesn't need a target to be used, so we just print the use text
+                        if object1 in pathways_dictionary:
+                            # we're going to retranslate "use door" as "go to door's second location:
+                            command_list = ["GO", "TO", pathways_dictionary[object1].location2]
+                            loop_again = True
+                        else:
+                            console_output += object_dictionary[object1].use_text["default"]
+                else:
+                    console_output += "I don't recognize what object you're trying to use."
+                    output_type = "unsuccessful"
+
+            #
+            #   SPECIAL VERBS
+            #
+            elif command_list[0] in special_verbs:
+                object1 = special_verbs[command_list[0]]
+                del command_list[0]
+                if find_obj():
+                    object2 = command_list[0]
+                    command_list = ["USE", object1, "WITH", object2]
+                    loop_again = True
+                else:
+                    #did not find target
+                    if object_dictionary[object1].location == "INVENTORY":
+                        console_output += "That command needs a target (a direct object).  Try again with one of the objects that is present."
+                        output_type = "unsuccessful"
+                    else:
+                        # Got rid of the below error message because it's potentially a clue to the player.
+                        #console_output += "You cannot use that command because you don't have the appropriate object in your inventory.")
+                        #instead:
+                        tot_fail()
+
+            #
+            #   MISC
+            #
+            elif strip_off(["LOOK", "AROUND"]):
+                command_list = ["LOOK", "AT", "ROOM"]
+                loop_again = True
+
+            elif strip_off(["LOOK", "THROUGH"]) or strip_off(["PEER", "THROUGH"]):
+                if find_obj() and command_list[0] in pathways_dictionary:
+                    console_output += pathways_dictionary[command_list[0]].look_thru_text[player_location]
+                else:
+                    console_output += "You can generally only look through pathways that lead to other locations (such as doorways.)"
+                    output_type = "unsuccessful"
+
+            elif strip_off(["GO", "THROUGH"]) or strip_off(["PASS", "THROUGH"]):
+                if find_obj():
+                    if command_list[0] in pathways_dictionary:
+                        command_list = ["USE", command_list[0]]
+                        loop_again = True
+                    else:
+                        tot_fail()
+                else:
+                    tot_fail()
+
+            elif strip_off(["HELP"]):
+                console_output += help_text
+                command_counter -= 1
+            elif strip_off(["ABOUT"]):
+                console_output += about_text
+                command_counter -= 1
+            elif strip_off(["EXIT","GAME"]):
+                console_output = "EXIT" #The GUI checks for this and will kill the application.
+            elif strip_off(["EXIT"]):
+                console_output += "To exit the game itself, you must type 'exit game'."
+                output_type = "unsuccessful"
+            elif strip_off(["MUTE"]) or strip_off(["TURN", "SOUND", "OFF"]) or strip_off(["TURN", "SOUNDS", "OFF"]):
+                sound_toggle = False
+                console_output += "Game sounds have been turned off."
+                command_counter -= 1  # cancel out timer increment
+            elif strip_off(["UNMUTE"]) or strip_off(["TURN", "SOUND", "ON"]) or strip_off(["TURN", "SOUNDS", "ON"]):
+                sound_toggle = True
+                output_type = "success"
+                console_output += "Game sounds have been turned on."
+                command_counter -= 1  # cancel out timer increment
+
             else:
-                #I'm not totally happy with this error message because it could be used as a clue... Hmm...
-                tgprint("You cannot use that command because you don't have the appropriate object in your inventory.")
-                tg_play_sound("unsuccessful")
+                tot_fail()
 
-    #
-    #   MISC
-    #
-    elif strip_off(["LOOK","AROUND"]):
-        command_list = ["LOOK","AT","ROOM"]
-        game()
-    elif strip_off(["LOOK","THROUGH"]) or strip_off(["PEER","THROUGH"]):
-        if find_obj() and command_list[0] in pathways_dictionary:
-            tgprint(pathways_dictionary[command_list[0]].look_thru_text[player_location])
-            tg_play_sound("neutral")
-        else:
-            tgprint("You can generally only look through pathways that lead to other locations (such as doorways.)")
-            tg_play_sound("unsuccessful")
+        #just exited while loop
+        if output_type == "unsuccessful":
+            command_counter -= 1 #back out the increment since we didn't understand it.
 
-    elif strip_off(["GO","THROUGH"]) or strip_off(["PASS","THROUGH"]):
-        if find_obj():
-            if command_list[0] in pathways_dictionary:
-                command_list = ["USE",command_list[0]]
-                game()
-            else:
-                command_fail()
-        else:
-            command_fail()
-    elif strip_off(["HELP"]):
-        press("   Help   ")
-        command_counter -= 1  # cancel out timer increment
-    elif strip_off(["ABOUT"]):
-        press("   About   ")
-        command_counter -= 1  # cancel out timer increment
-    elif strip_off(["MUTE"]) or strip_off(["TURN","SOUND","OFF"]) or strip_off(["TURN","SOUNDS","OFF"]):
-        sound_toggle = False
-        tgprint("Game sounds have been turned off.")
-        command_counter -= 1  # cancel out timer increment
-    elif strip_off(["UNMUTE"])or strip_off(["TURN","SOUND","ON"]) or strip_off(["TURN","SOUNDS","ON"]):
-        sound_toggle = True
-        tgprint("Game sounds have been turned on.")
-        tg_play_sound("success")
-        command_counter -= 1  # cancel out timer increment
+        #play sound based on output type:
+        if sound_toggle:
+            tg_gui.play_sound(tg, output_type)
 
-#
-#   TOTAL FAIL
-#
-    elif len(command_list): #We check this so that an accidental enter key doesn't erase what's on the screen.
-            command_fail()
-    else:
-        #only executes if there's no text on the command line:
-        command_counter -= 1 #cancel out timer increment
+    #some debugging stuff
+    print(command_input)
+    print(command_list)
+    print("count: ", command_counter)
+    print(console_output)
 
-
-
-
-
+    #finally send the output text to the GUI
+    return console_output
 #
 #
 #
-#
-# leave this command last:
+# This stuff goes last:
+tg = tg_gui.setup_gui(game_name, game_func)
 tg.go()

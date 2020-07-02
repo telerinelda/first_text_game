@@ -58,12 +58,12 @@ def play_sound(tg,sound_type = "neutral"):
     elif sound_type == "unsuccessful":
         sound_file = "sounds/unsuccessful" + choice(["1","2","3"]) + ".Wav"
     elif sound_type == "success":
-        sound_file = "sounds/success1.Wav"
+        sound_file = "../sounds/success1.Wav"
     elif sound_type == "zelda":
-        sound_file = "sounds/Zeldasound.Wav"
+        sound_file = "../sounds/Zeldasound.Wav"
     elif sound_type == "death":
-        sound_file = "sounds/death.Wav"
+        sound_file = "../sounds/death.Wav"
     elif sound_type == "victory":
-        sound_file = "sounds/victory.Wav"
+        sound_file = "../sounds/victory.Wav"
     if sound_file != "":
         tg.playSound(sound_file)
