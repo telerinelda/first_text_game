@@ -31,9 +31,13 @@ def setup_gui(game_name,game_func):
             tg.setMessage("console", game_func("about"))
             #tg_play_sound("neutral")
         elif button == "   Submit   ":
-            tg.setMessage("console",game_func(tg.getEntry("input")))
-            tg.setEntry("input", "")
-            tg.setFocus("input")
+            get_game_response = game_func(tg.getEntry("input"))
+            if get_game_response == "EXIT":
+                tg.stop()
+            else:
+                tg.setMessage("console",get_game_response)
+                tg.setEntry("input", "")
+                tg.setFocus("input")
         else:
             print("this shouldn't happen")
 

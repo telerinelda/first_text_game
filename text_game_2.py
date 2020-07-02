@@ -185,10 +185,10 @@ def game_func(command_input):
         console_output += "I'm sorry, I didn't understand the command."
         output_type = "unsuccessful"
 
-    if len(command_input): #hoping that skipping this on an errant entry key will reprint the same message as previous
+    if len(command_input): #skipping this on an errant entry key will reprint the same message as previous
         command_counter += 1 #gets reversed later if the command is invalid.
         console_output = "" #everything below adds to this and then it gets returned.
-        output_type = "neutral" #default response.
+        output_type = "neutral" #default response type.
         command_list = command_input.upper().replace(".", "").replace(",", "").split()
         command_list[:] = [x for x in command_list if x not in ["A", "THE"]]  # remove fluff
         loop_again = True
@@ -398,7 +398,7 @@ def game_func(command_input):
                 console_output += about_text
                 command_counter -= 1
             elif strip_off(["EXIT","GAME"]):
-                tg.stop()
+                console_output = "EXIT" #The GUI checks for this and will kill the application.
             elif strip_off(["EXIT"]):
                 console_output += "To exit the game itself, you must type 'exit game'."
                 output_type = "unsuccessful"
