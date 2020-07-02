@@ -4,7 +4,7 @@ from game import Thing, Place, Pathway
 
 # some initial values
 game_name = "test game name"
-sound_toggle = True
+sound_toggle = False
 progress = set()  # you can add values here to keep track of the player's progress through the game. might change how game progress works later when I tackle that.
 object_dictionary = dict()
 pathways_dictionary = dict()
@@ -163,14 +163,48 @@ special_verbs["ATTACK"] = "SWORD"
 
 
 def game_func(command_input):
-    #everything happens here!
-    console_output = "game function outputs this text"
+    # this function receives the input and returns a text output to display.
+    global player_location
+    global object_dictionary
+    global pathways_dictionary
+    global command_counter
+    global sound_toggle
+
+    def tot_fail():
+        nonlocal console_output
+        nonlocal output_type
+        #couldn't understand the command at all
+        console_output += "I'm sorry, I didn't understand the command."
+        output_type = "unsuccessful"
+
+    previous_output = console_output #not sure if this works yet
+    command_counter += 1 #gets reversed later if the command is invalid.
+    console_output = "" #everything below adds to this and then it gets returned.
+    output_type = "neutral" #default response.
+    command_list = command_input.upper().replace(".", "").replace(",", "").split()
+    command_list[:] = [x for x in command_list if x not in ["A", "THE"]]  # remove fluff
+    loop_again = True
+    while loop_again:
+        loop_again = False
+
+
+
+    if output_type == "unsuccessful":
+        command_counter -= 1 #back out the increment since we didn't understand it.
+
+    #play sound based on output type:
+    if sound_toggle:
+        tg_gui.play_sound(tg, output_type)
+
+    #finally send the output text to the GUI
     return console_output
 
-tg = tg_gui.setup_gui(game_name,help_text,about_text,game_func)
 
-tg_gui.play_sound(tg,"zelda")
+
+
 #
 #
-# leave this command last:
+#
+# This stuff goes last:
+tg = tg_gui.setup_gui(game_name,help_text,about_text,game_func)
 tg.go()
