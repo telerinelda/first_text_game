@@ -1,16 +1,9 @@
-
-
-
-# ---------------------------------------------------------------------------------------------
-#   Finally, this is the part where we interpret what the player typed in the command line
-# ---------------------------------------------------------------------------------------------
-def command_fail():
-    global command_counter
-    tgprint("I'm sorry. I don't understand the command you entered.")
-    tg_play_sound("unsuccessful")
-    command_counter -= 1 #this command didn't increment the counter.
-
 def game():
+    def command_fail():
+        global command_counter
+        tgprint("I'm sorry. I don't understand the command you entered.")
+        tg_play_sound("unsuccessful")
+        command_counter -= 1  # this command didn't increment the counter.
 
     global command_list
     global player_location

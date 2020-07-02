@@ -28,7 +28,7 @@ class Thing:
 # here's a subclass that is for locations (ie rooms).
 class Place(Thing):
     def __init__(self, obj_name):
-        self.name = obj_name
+        super().__init__(obj_name)
         self.location = self.name
         self.is_location = True
         self.room_look_text = {"default":""}
@@ -36,12 +36,11 @@ class Place(Thing):
 # here's a subclass that is for pathways connecting rooms: doorways, hallways that don't need to be locations.
 class Pathway(Thing):
     def __init__(self, obj_name):
-        self.name = obj_name
+        super().__init__(obj_name)
+        self.location2 = "NOWHERE" #this variable will always be the room the player is NOT in (they swap when he moves)
+        self.pathway_open = True #can you pass through?
+        self.look_thru_text = dict() #If the player tries to peer through the pathway to the next room or location.
 
-    location2 = "NOWHERE" #this variable will always be the room the player is NOT in (they swap when he moves)
-    pathway_open = True #can you pass through?
-    
     def switch(self):
         #this is a method for reversing the locations when you enter the room.  location2 is always the "other" location.
         self.location, self.location2 = self.location2, self.location
-    look_thru_text = dict() #If the player tries to peer through the pathway to the next room or location.
