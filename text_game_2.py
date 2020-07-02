@@ -397,6 +397,11 @@ def game_func(command_input):
             elif strip_off(["ABOUT"]):
                 console_output += about_text
                 command_counter -= 1
+            elif strip_off(["EXIT","GAME"]):
+                tg.stop()
+            elif strip_off(["EXIT"]):
+                console_output += "To exit the game itself, you must type 'exit game'."
+                output_type = "unsuccessful"
             elif strip_off(["MUTE"]) or strip_off(["TURN", "SOUND", "OFF"]) or strip_off(["TURN", "SOUNDS", "OFF"]):
                 sound_toggle = False
                 console_output += "Game sounds have been turned off."
