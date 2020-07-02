@@ -1,7 +1,7 @@
 from appJar import gui
 from random import choice
 
-def setup_gui(game_name,help_text,about_text,game_func):
+def setup_gui(game_name,game_func):
     # Here we are setting up the GUI window using Appjar
     tg = gui(game_name, "1000x600")
     tg.setPadding([20,20])
@@ -24,11 +24,11 @@ def setup_gui(game_name,help_text,about_text,game_func):
             tg.stop()
         elif button == "   Help   ":
             # help stuff here.
-            tg.setMessage("console", help_text)
+            tg.setMessage("console", game_func("help"))
             #tg_play_sound("neutral")
             tg.setFocus("input")
         elif button == "   About   ":
-            tg.setMessage("console", about_text)
+            tg.setMessage("console", game_func("about"))
             #tg_play_sound("neutral")
         elif button == "   Submit   ":
             tg.setMessage("console",game_func(tg.getEntry("input")))

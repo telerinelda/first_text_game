@@ -1,18 +1,3 @@
-def game():
-    def command_fail():
-        global command_counter
-        console_output +="I'm sorry. I don't understand the command you entered."
-        tg_play_sound("unsuccessful")
-        command_counter -= 1  # this command didn't increment the counter.
-
-    global command_list
-    global player_location
-    global object_dictionary
-    global pathways_dictionary
-    global command_counter
-    global sound_toggle
-
-    #tg.tg_play_sound("neutral1.wav")
 
     #
     #       LOOK AT

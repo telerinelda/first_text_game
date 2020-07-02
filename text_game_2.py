@@ -16,6 +16,7 @@ about_text = "The About button prints this."
 command_list = [] #each command entered by the player goes here and then we analyze it.
 special_verbs = dict()
 command_counter = 0 #this increments with each semi-successful command.
+console_output = ""
 
 #this can be used to set up events that occur after a certain number of commands.  The wait command will advance the
 #command counter until the next event in the scheduled events dictionary.
@@ -169,32 +170,40 @@ def game_func(command_input):
     global pathways_dictionary
     global command_counter
     global sound_toggle
+    global command_list
+    global console_output
 
     def tot_fail():
-        nonlocal console_output
+        global console_output
         nonlocal output_type
         #couldn't understand the command at all
         console_output += "I'm sorry, I didn't understand the command."
         output_type = "unsuccessful"
 
-    previous_output = console_output #not sure if this works yet
-    command_counter += 1 #gets reversed later if the command is invalid.
-    console_output = "" #everything below adds to this and then it gets returned.
-    output_type = "neutral" #default response.
-    command_list = command_input.upper().replace(".", "").replace(",", "").split()
-    command_list[:] = [x for x in command_list if x not in ["A", "THE"]]  # remove fluff
-    loop_again = True
-    while loop_again:
-        loop_again = False
+    if len(command_input): #hoping that skipping this on an errant entry key will reprint the same message as previous
+        command_counter += 1 #gets reversed later if the command is invalid.
+        console_output = "" #everything below adds to this and then it gets returned.
+        output_type = "neutral" #default response.
+        command_list = command_input.upper().replace(".", "").replace(",", "").split()
+        command_list[:] = [x for x in command_list if x not in ["A", "THE"]]  # remove fluff
+        loop_again = True
+        while loop_again:
+            loop_again = False
 
 
 
-    if output_type == "unsuccessful":
-        command_counter -= 1 #back out the increment since we didn't understand it.
+        if output_type == "unsuccessful":
+            command_counter -= 1 #back out the increment since we didn't understand it.
 
-    #play sound based on output type:
-    if sound_toggle:
-        tg_gui.play_sound(tg, output_type)
+        #play sound based on output type:
+        if sound_toggle:
+            tg_gui.play_sound(tg, output_type)
+
+    #some debugging stuff
+    print(command_input)
+    print(command_list)
+    print("count: ", command_counter)
+    print(console_output)
 
     #finally send the output text to the GUI
     return console_output
@@ -206,5 +215,5 @@ def game_func(command_input):
 #
 #
 # This stuff goes last:
-tg = tg_gui.setup_gui(game_name,help_text,about_text,game_func)
+tg = tg_gui.setup_gui(game_name,game_func)
 tg.go()
