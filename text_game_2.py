@@ -215,12 +215,12 @@ def game_func(command_input):
                             if object_dictionary[obj].location == player_location:  # this excludes the inventory
                                 console_output += "\n"
                                 console_output += object_dictionary[obj].room_look_text["default"]
-                            elif command_list[0] == "INVENTORY":
-                                console_output += "Here's a list of the things in your inventory:\n"
-                                for obj in object_dictionary:
-                                    if object_dictionary[obj].location == "INVENTORY":
-                                        console_output += obj.lower()
-                                        console_output += "\n"
+                elif command_list[0] == "INVENTORY":
+                    console_output += "Here's a list of the things in your inventory:\n"
+                    for obj in object_dictionary:
+                        if object_dictionary[obj].location == "INVENTORY":
+                            console_output += obj.lower()
+                            console_output += "\n"
                 elif find_location():
                     #we're looking at a location that is not the player location.
                     for obj in pathways_dictionary:
