@@ -422,10 +422,10 @@ def game_func(command_input):
             tg_gui.play_sound(tg, output_type)
 
     #some debugging stuff
-    print(command_input)
-    print(command_list)
-    print("count: ", command_counter)
-    print(console_output)
+    #print(command_input)
+    #print(command_list)
+    #print("count: ", command_counter)
+    #print(console_output)
 
     #finally send the output text to the GUI
     return console_output
