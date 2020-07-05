@@ -1,4 +1,4 @@
-from game import Thing, Place, Pathway, tg_gui
+from game import Thing, Place, Pathway, tg_gui, gameState
 
 # some initial values
 game_name = "test game name"

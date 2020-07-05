@@ -30,6 +30,7 @@ def setup_gui(game_name,game_func):
         elif button == "   About   ":
             tg.setMessage("console", game_func("about"))
             #tg_play_sound("neutral")
+            tg.setFocus("input")
         elif button == "   Submit   ":
             get_game_response = game_func(tg.getEntry("input"))
             if get_game_response == "EXIT":
@@ -51,19 +52,19 @@ def setup_gui(game_name,game_func):
 
     return tg
 
-def play_sound(tg,sound_type = "neutral"):
+def play_sound(tg, sound_type = "neutral"):
     sound_file = ""
     if sound_type == "neutral":
         sound_file = "sounds/neutral" + choice(["1","2","3"]) + ".Wav"
     elif sound_type == "unsuccessful":
         sound_file = "sounds/unsuccessful" + choice(["1","2","3"]) + ".Wav"
     elif sound_type == "success":
-        sound_file = "../sounds/success1.Wav"
+        sound_file = "sounds/success1.Wav"
     elif sound_type == "zelda":
-        sound_file = "../sounds/Zeldasound.Wav"
+        sound_file = "sounds/Zeldasound.Wav"
     elif sound_type == "death":
-        sound_file = "../sounds/death.Wav"
+        sound_file = "sounds/death.Wav"
     elif sound_type == "victory":
-        sound_file = "../sounds/victory.Wav"
+        sound_file = "sounds/victory.Wav"
     if sound_file != "":
         tg.playSound(sound_file)
