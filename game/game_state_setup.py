@@ -7,7 +7,7 @@ class gameState:
         self.progress = set()
         self.object_dictionary = dict()
         self.pathways_dictionary = dict()
-        self.player_location = "ROOM1" #starting point
+        self.player_location = "ROOM 1" #starting point
         self.help_text = "HELP:\n\nThis is a text-based game. You can play by entering commands in the command line.  Common " \
             "commands are phrases like 'look at', 'pick up', or 'use'. Most commands need an object. Try typing 'Look" \
             " at room'.  \n\n'mute' or 'unmute' will turn the game sounds on or off."

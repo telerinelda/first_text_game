@@ -1,6 +1,6 @@
 from game import Thing, Place, Pathway
 from game import tg_gui
-from game import gameState, add_object_data
+from game import gameState, add_object_data, replacements
 
 gs = gameState() #load the initial values for a new game.
 gs = add_object_data(gs)
@@ -12,13 +12,6 @@ gs = add_object_data(gs)
 #--------------------------------------------------------------------------------
 def game_func(command_input):
     # this function receives the input and returns a text output to display.
-    #global gs.player_location
-    #global gs.object_dictionary
-    #global gs.pathways_dictionary
-    #global gs.command_counter
-    #global gs.sound_toggle
-    #global gs.command_list
-    #global gs.console_output
 
     def tot_fail():
         #global gs.console_output
@@ -31,8 +24,8 @@ def game_func(command_input):
         gs.command_counter += 1 #gets reversed later if the command is invalid.
         gs.console_output = "" #everything below adds to this and then it gets returned.
         output_type = "neutral" #default response type.
-        gs.command_list = command_input.upper().replace(".", "").replace(",", "").split()
-        gs.command_list[:] = [x for x in gs.command_list if x not in ["A", "THE"]]  # remove fluff
+        gs.command_list = replacements(command_input.upper().replace(".", "").replace(",", "").split())
+        gs.command_list[:] = [x for x in gs.command_list if x not in ["A", "THE", "MY", "THIS"]]  # remove fluff
         loop_again = True
         while loop_again:
             loop_again = False #sometimes we'll set this to True below if we need to retranslate the command.

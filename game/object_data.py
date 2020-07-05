@@ -1,12 +1,35 @@
 from game import Thing, Place, Pathway
 
+def subseq_replace(comlist, find, replace):
+    #print(range(len(comlist)))
+    for i in range(len(comlist)):
+        #print(comlist[i:i + len(find)])
+        if comlist[i:i + len(find)] == find:
+            del comlist[i:i + len(find)]
+            comlist.insert(i,replace)
+            break
+    return comlist
+
+def replacements(comlist):
+    #this needs to find subsequences and replace them with single items....
+    #it will call subseq_replace, defined above, once for each replacement.
+    comlist = subseq_replace(comlist,["DOOR","WAY"],"DOOR")
+    comlist = subseq_replace(comlist,["GREAT","TOOL"],"HAMMER")
+    comlist = subseq_replace(comlist, ["ROOM", "1"], "ROOM 1")
+    comlist = subseq_replace(comlist, ["ROOM", "2"], "ROOM 2")
+    comlist = subseq_replace(comlist, ["ROOM", "ONE"], "ROOM 1")
+    comlist = subseq_replace(comlist, ["ROOM", "TWO"], "ROOM 2")
+
+
+    return comlist
+
 def add_object_data(gs):
 
     # ---------------------------------------------------------------------------------------------
     #  Game Objects and Locations
     # ---------------------------------------------------------------------------------------------
     #  Sample Location 1:
-    room1 = Place("ROOM1")
+    room1 = Place("ROOM 1")
     #the object room1 will rarely be used by that handle.  instead we call it with gs.object_dictionary("ROOM1")
     room1.look_text = {"default": "You look at room number 1.  It's pretty simple."}
     #room1.room_look_text = {"default": ""}  # Not needed for locations
@@ -17,7 +40,7 @@ def add_object_data(gs):
     gs.object_dictionary[room1.name] = room1
 
     #  Sample Location 2:
-    room2 = Place("ROOM2")
+    room2 = Place("ROOM 2")
     room2.look_text = {"default": "You look at room number 2.  It's pretty simple."}
     #room2.room_look_text = {"default": ""}  # Not needed for locations
     room2.pick_up_text = {"default": "You would like to pick up the room but it's kinda too big."}
@@ -27,19 +50,19 @@ def add_object_data(gs):
     gs.object_dictionary[room2.name] = room2
 
     # list connections between locations here. (DNU! old way)
-    #connections = [{"ROOM1", "ROOM2"}]
+    #connections = [{"ROOM 1", "ROOM 2"}]
 
     #sample doorway:
     door = Pathway("DOOR")
-    door.location = "ROOM1"
-    door.location2 = "ROOM2"
-    door.look_text = {"ROOM1":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room2.",
-                      "ROOM2":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room1."}
+    door.location = "ROOM 1"
+    door.location2 = "ROOM 2"
+    door.look_text = {"ROOM 1":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room 2.",
+                      "ROOM 2":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room 1."}
     door.room_look_text = {"default":"There is a door."}
     door.pick_up_text = {"default":"Sigh.... No you can't pick up a door."}
     door.go_to_text = {"default":"You approach the door..."}
-    door.look_thru_text = {"ROOM1":"Beyond the door is room2.  You can make out a wooden table.",
-                           "ROOM2":"Beyond the door is room1.  You don't see any people or large objects."}
+    door.look_thru_text = {"ROOM 1":"Beyond the door is room 2.  You can make out a wooden table.",
+                           "ROOM 2":"Beyond the door is room 1.  You don't see any people or large objects."}
     #door.use_text = {} #not needed for pathways.
     gs.object_dictionary[door.name] = door
     gs.pathways_dictionary[door.name] = door
@@ -47,7 +70,7 @@ def add_object_data(gs):
 
     #  Sample Object: a rock you can pick up:
     rock = Thing("ROCK")
-    rock.location = "ROOM1"
+    rock.location = "ROOM 1"
     rock.can_pick_up = True
     rock.look_text = {"default": "You look at the rock.  It is grey and hard, about the size of a baseball."}
     rock.room_look_text = {"default": "There is a rock."}
@@ -60,7 +83,7 @@ def add_object_data(gs):
 
     #  Sample Object: a table that remains stationary
     table = Thing("TABLE")
-    table.location = "ROOM2"
+    table.location = "ROOM 2"
     table.can_pick_up = False #this isn't needed because by default you can't pick up objects
     table.look_text = {"default": "You are looking at a medium size table made of dark brown wood.  It is old and heavy."}
     table.room_look_text = {"default": "There is a table."}
@@ -80,7 +103,7 @@ def add_object_data(gs):
     #  Sample Transitive Object: a hammer is a transitive object.  to use it you must use it ON something.
     hammer = Thing("HAMMER")
     hammer.is_transitive = True
-    hammer.location = "ROOM1"
+    hammer.location = "ROOM 1"
     hammer.can_pick_up = True
     hammer.look_text = {"default": "You look at the hammer.  It is made of metal with a wooden handle."}
     hammer.room_look_text = {"default": "There is a hammer."}
