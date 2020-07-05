@@ -3,3 +3,4 @@
 # import it the way you want to.
 from .nouns import Place, Thing, Pathway
 from .game_state_setup import gameState
+from .object_data import add_object_data

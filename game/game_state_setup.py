@@ -1,6 +1,5 @@
 #set up game state and define some methods used by the game engine.
 
-
 class gameState:
     def __init__(self):
         self.game_name = "game name here"
@@ -18,6 +17,7 @@ class gameState:
         self.command_counter = 0
         self.console_output = ""
         self.scheduled_events = dict()
+
 
     # this is a function that returns a boolean value if a certain object is present
     def is_present(self,obj_name):
