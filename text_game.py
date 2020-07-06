@@ -256,6 +256,10 @@ def game_func(command_input):
                 output_type = "success"
                 gs.console_output += "Game sounds have been turned on."
                 gs.command_counter -= 1  # cancel out timer increment
+            elif gs.strip_off(["WAIT"]):
+                if len(gs.scheduled_events):
+                    gs.command_counter = min(gs.scheduled_events.keys())
+                gs.console_output += "You wait silently.  Time passes."
 
             else:
                 tot_fail()
@@ -272,6 +276,7 @@ def game_func(command_input):
             #custom code for events here.
             if gs.scheduled_events[gs.command_counter] == "RUMBLE":
                 gs.console_output += "\n\nA distant rumble threatens..."
+            del gs.scheduled_events[gs.command_counter] #always remove them after they are executed.
 
     #some debugging stuff
     #print(command_input)
