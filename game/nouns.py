@@ -4,7 +4,7 @@ class Thing:
         self.name = obj_name
 
         self.location = "nowhere"
-        self.sublocation = ""
+        self.sublocation = [] #takes two values:  the object and the preposition
         self.can_pick_up = False
         self.is_transitive = False  # does it need a direct object to be used?
         self.is_location = False  # is this thing the room itself?
@@ -19,10 +19,19 @@ class Thing:
         self.go_to_text = {"default": "default go to"}
 
         #other objects may be able to be located in, on, or under this object.  So we can set up a sublocation: (sublocation programming is incomplete)
-        self.num_sublocations = 0 #should always equal len of the two below strings
+        #self.num_sublocations = 0 #should always equal len of the two below strings
         self.sublocation_preposition = [] #values like "UNDER" or "ON" that the user can use
         self.sublocation_text = [] #values like "under the bed" for building phrases about the place.
         self.sublocation_hidden = [] #booleans True if you can't see the sublocation just by gazing on the object itself.
+
+    def num_sublocations(self):
+        return len(self.sublocation_text)
+
+    def in_sublocation(self):
+        if len(self.sublocation):
+            return True
+        else
+            return False
 
 
 # here's a subclass that is for locations (ie rooms).

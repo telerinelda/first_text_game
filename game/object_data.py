@@ -97,13 +97,12 @@ def add_object_data(gs):
     table.sublocation_hidden.append(False) #True if the user must look there before he's aware of ojects there
     table.sublocation_preposition.append("ON") #this is what we look for in the user commands
     table.sublocation_text.append("on the table") #this is what we parse into the output language
-    table.num_sublocations = len(table.sublocation_hidden) #always run this after adding a sublocation
-
 
     #  Sample Transitive Object: a hammer is a transitive object.  to use it you must use it ON something.
     hammer = Thing("HAMMER")
     hammer.is_transitive = True
-    hammer.location = "ROOM 1"
+    hammer.location = "ROOM 2"
+    hammer.sublocation = ["TABLE","ON"]
     hammer.can_pick_up = True
     hammer.look_text = {"default": "You look at the hammer.  It is made of metal with a wooden handle."}
     hammer.room_look_text = {"default": "There is a hammer."}
