@@ -18,6 +18,7 @@ class gameState:
         self.command_counter = 0
         self.console_output = ""
         self.scheduled_events = dict()
+        self.wait_text = "You wait silently.  Time passes."
         #here's two example events
         self.scheduled_events[5] = "RUMBLE"
         self.scheduled_events[10] = "RUMBLE"

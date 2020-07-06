@@ -259,7 +259,7 @@ def game_func(command_input):
             elif gs.strip_off(["WAIT"]):
                 if len(gs.scheduled_events):
                     gs.command_counter = min(gs.scheduled_events.keys())
-                gs.console_output += "You wait silently.  Time passes."
+                gs.console_output += gs.wait_text
 
             else:
                 tot_fail()
