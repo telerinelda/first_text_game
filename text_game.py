@@ -268,10 +268,15 @@ def game_func(command_input):
         if gs.sound_toggle:
             tg_gui.play_sound(tg, output_type)
 
+        if gs.command_counter in gs.scheduled_events:
+            #custom code for events here.
+            if gs.scheduled_events[gs.command_counter] == "RUMBLE":
+                gs.console_output += "\n\nA distant rumble threatens..."
+
     #some debugging stuff
     #print(command_input)
     #print(gs.command_list)
-    #print("count: ", gs.command_counter)
+    print("count: ", gs.command_counter)
     #print(gs.console_output)
 
     #finally send the output text to the GUI

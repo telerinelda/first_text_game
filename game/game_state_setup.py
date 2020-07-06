@@ -18,6 +18,9 @@ class gameState:
         self.command_counter = 0
         self.console_output = ""
         self.scheduled_events = dict()
+        #here's two example events
+        self.scheduled_events[5] = "RUMBLE"
+        self.scheduled_events[10] = "RUMBLE"
 
 
     # this is a function that returns a boolean value if a certain object is present
