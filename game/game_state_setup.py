@@ -3,6 +3,7 @@
 class gameState:
     def __init__(self):
         self.game_name = "game name here"
+        self.game_opening_text = "The game has begun!  You are in a room."
         self.sound_toggle = False
         self.progress = set()
         self.object_dictionary = dict()

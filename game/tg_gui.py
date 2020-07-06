@@ -1,14 +1,15 @@
 from appJar import gui
 from random import choice
+import time
 
-def setup_gui(game_name,game_func):
+def setup_gui(game_name,game_func,start_text):
     # Here we are setting up the GUI window using Appjar
     tg = gui(game_name, "1000x600")
     tg.setPadding([20,20])
     tg.setStretch("both")
     tg.setSticky("ewns")
     tg.setBg("burlywood4")
-    tg.addMessage("console", "This game is powered By Generic Text Game Engine, by Kevin Hughes")
+    tg.addMessage("console", "")
     tg.setMessageBg("console","PaleGreen1")
     tg.setMessageWidth("console",960)
     #tg.setStretch("none")
@@ -39,8 +40,7 @@ def setup_gui(game_name,game_func):
                 tg.setMessage("console",get_game_response)
                 tg.setEntry("input", "")
                 tg.setFocus("input")
-        else:
-            print("this shouldn't happen")
+
 
     def ent():
         press("   Submit   ")
@@ -49,6 +49,12 @@ def setup_gui(game_name,game_func):
     tg.addButtons(["   Submit   ", "   Help   ", "   About   ", "   Exit   "], press)
     tg.setFocus("input")
     # this bit makes the Submit button get activated if you press the enter key
+
+    def start_up():
+        tg.setMessage("console", "This game is powered by the Generic Text Game Engine, by Kevin Hughes\n\n"+ start_text)
+
+    tg.setStartFunction(start_up)
+
 
     return tg
 

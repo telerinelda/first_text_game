@@ -13,6 +13,8 @@ gs = add_object_data(gs)
 def game_func(command_input):
     # this function receives the input and returns a text output to display.
 
+    global gs
+
     def tot_fail():
         #global gs.console_output
         nonlocal output_type
@@ -237,6 +239,14 @@ def game_func(command_input):
             elif gs.strip_off(["EXIT"]):
                 gs.console_output += "To exit the game itself, you must type 'exit game'."
                 output_type = "unsuccessful"
+            elif gs.strip_off(["RESTART","GAME"]):
+                gs = gameState()  # load the initial values for a new game.
+                gs = add_object_data(gs)
+                gs.console_output = "Restarting Game....\n\n"
+                gs.console_output += gs.game_opening_text
+            elif gs.strip_off(["RESTART"]):
+                gs.console_output += "To restart the game itself, you must type 'restart game'."
+                output_type = "unsuccessful"
             elif gs.strip_off(["MUTE"]) or gs.strip_off(["TURN", "SOUND", "OFF"]) or gs.strip_off(["TURN", "SOUNDS", "OFF"]):
                 gs.sound_toggle = False
                 gs.console_output += "Game sounds have been turned off."
@@ -270,6 +280,6 @@ def game_func(command_input):
 #
 #
 # This stuff goes last:
-tg = tg_gui.setup_gui(gs.game_name, game_func)
+tg = tg_gui.setup_gui(gs.game_name, game_func,gs.game_opening_text)
 
 tg.go()
