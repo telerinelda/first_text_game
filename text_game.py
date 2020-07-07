@@ -43,15 +43,43 @@ def game_func(command_input):
                         if gs.command_list[0] in gs.pathways_dictionary:
                             gs.console_output += gs.pathways_dictionary[gs.command_list[0]].look_text[gs.player_location]
                         else:
-                            # otherwise we just print the default description:
-                            gs.console_output += gs.object_dictionary[gs.command_list[0]].look_text["default"]
+                            # here we're looking at an object that isn't a location or a pathway.
+                            # the final check: is it hidden in a sublocation?
+                            if gs.object_dictionary[gs.command_list[0]].is_hidden(gs):
+                                #It's important this matches the error message below
+                                # for when the object name isn't recognized at all!
+                                #the object is present but hidden. we don't want to tip off the user...
+                                gs.console_output += "I didn't recognize the name of what you're trying to look at."
+                                output_type = "unsuccessful"
+                            else:
+                                #standard output for looking at an object.
+                                gs.console_output += gs.object_dictionary[gs.command_list[0]].look_text["default"]
                     else:
                         # we're looking at a location
                         gs.console_output += gs.object_dictionary[gs.command_list[0]].look_text["default"]
+                        look_subs = []
+                        gs.console_output += "\n"
                         for obj in gs.object_dictionary:
-                            if gs.object_dictionary[obj].location == gs.player_location:  # this excludes the inventory
+                            if gs.object_dictionary[obj].location == gs.player_location and gs.object_dictionary[obj].sublocation == []:
+                                # this excludes the inventory and objects in sublocations.
                                 gs.console_output += "\n"
                                 gs.console_output += gs.object_dictionary[obj].room_look_text["default"]
+                            #now we're going to build a collection of the sublocations that need to be mentioned.
+                            if gs.object_dictionary[obj].location == gs.player_location and gs.object_dictionary[obj].sublocation != [] and not gs.object_dictionary[obj].is_hidden(gs):
+                                if gs.object_dictionary[obj].sublocation not in look_subs:
+                                    look_subs.append(gs.object_dictionary[obj].sublocation)
+                        for sub in look_subs:
+                            #now list the sublocated objects by sublocation
+                            gs.console_output += "\n\n"
+                            sub_owner = sub[0]
+                            sub_prep = sub[1]
+                            sub_i = gs.object_dictionary[sub_owner].sublocation_index(sub_prep)
+                            gs.console_output += gs.object_dictionary[sub_owner].sublocation_text + ":"
+                            for obj in gs.object_dictionary:
+                                if gs.object_dictionary[obj].sublocation == [sub_owner,sub_prep]:
+                                    gs.console_output += "\n"
+                                    gs.console_output += gs.object_dictionary[obj].room_look_text["default"]
+
                 elif gs.command_list[0] == "INVENTORY":
                     gs.console_output += "Here's a list of the things in your inventory:\n"
                     for obj in gs.object_dictionary:

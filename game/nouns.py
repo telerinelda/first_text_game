@@ -4,7 +4,7 @@ class Thing:
         self.name = obj_name
 
         self.location = "nowhere"
-        self.sublocation = [] #takes two values:  the object and the preposition
+        self.sublocation = [] #takes two values:  the object that owns the sublocation, and the preposition
         self.can_pick_up = False
         self.is_transitive = False  # does it need a direct object to be used?
         self.is_location = False  # is this thing the room itself?
@@ -21,7 +21,7 @@ class Thing:
         #other objects may be able to be located in, on, or under this object.  So we can set up a sublocation: (sublocation programming is incomplete)
         #self.num_sublocations = 0 #should always equal len of the two below strings
         self.sublocation_preposition = [] #values like "UNDER" or "ON" that the user can use
-        self.sublocation_text = [] #values like "under the bed" for building phrases about the place.
+        self.sublocation_text = [] #values like "Under the bed" for building phrases about the place. start with capital.
         self.sublocation_hidden = [] #booleans True if you can't see the sublocation just by gazing on the object itself.
 
     def num_sublocations(self): #dynamically return the number of sublocations an object has.
@@ -30,7 +30,7 @@ class Thing:
     def in_sublocation(self): #boolean to check location of this object
         if len(self.sublocation):
             return True
-        else
+        else:
             return False
 
     def add_sublocation(self,preposition, text, hidden):
@@ -38,6 +38,22 @@ class Thing:
         self.sublocation_text = text
         self.sublocation_hidden = hidden
 
+    def sublocation_index(self,preposition):
+        for i in range(self.num_sublocations()):
+            if self.sublocation_preposition == preposition:
+                return i
+        else:
+            raise Exception
+
+    def is_hidden(self,gs):
+        #return true if the object is located in a still-hidden sublocation
+        if self.sublocation == []:
+            return False
+        else:
+            sub_owner = gs.object_dictionary[self.sublocation[0]]
+            prep = self.sublocation[1]
+            sub_i = sub_owner.sublocation_index(prep)
+            return sub_owner.sublocation_hidden
 
 # here's a subclass that is for locations (ie rooms).
 class Place(Thing):
