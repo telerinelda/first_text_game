@@ -94,9 +94,7 @@ def add_object_data(gs):
     gs.object_dictionary[table.name] = table
 
     #  Sublocation example:  We make "on the table" a place you can put things.
-    table.sublocation_hidden.append(False) #True if the user must look there before he's aware of ojects there
-    table.sublocation_preposition.append("ON") #this is what we look for in the user commands
-    table.sublocation_text.append("on the table") #this is what we parse into the output language
+    table.add_sublocation(preposition="ON",text="on the table",hidden=False)
 
     #  Sample Transitive Object: a hammer is a transitive object.  to use it you must use it ON something.
     hammer = Thing("HAMMER")

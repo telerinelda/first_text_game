@@ -24,14 +24,19 @@ class Thing:
         self.sublocation_text = [] #values like "under the bed" for building phrases about the place.
         self.sublocation_hidden = [] #booleans True if you can't see the sublocation just by gazing on the object itself.
 
-    def num_sublocations(self):
+    def num_sublocations(self): #dynamically return the number of sublocations an object has.
         return len(self.sublocation_text)
 
-    def in_sublocation(self):
+    def in_sublocation(self): #boolean to check location of this object
         if len(self.sublocation):
             return True
         else
             return False
+
+    def add_sublocation(self,preposition, text, hidden):
+        self.sublocation_preposition = preposition
+        self.sublocation_text = text
+        self.sublocation_hidden = hidden
 
 
 # here's a subclass that is for locations (ie rooms).
