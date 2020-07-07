@@ -160,6 +160,7 @@ def game_func(command_input):
                     gs.console_output += "I don't recognize the name of what you're trying to obtain."
                     output_type = "unsuccessful"
 
+
             #
             #       DROP
             #
@@ -175,6 +176,42 @@ def game_func(command_input):
                 else:
                     gs.console_output += "I don't recognize the name of what you're trying to get rid of."
                     output_type = "unsuccessful"
+            elif gs.strip_off(["PUT"]) or gs.strip_off(["PLACE"]):
+                if gs.find_obj():
+                    if gs.object_dictionary[gs.command_list[0]].location == "INVENTORY":
+                        obj = gs.command_list[0]
+                        del gs.command_list[0]
+                        if gs.strip_off(["DOWN"]):
+                            gs.command_list = ["DROP",obj]
+                            loop_again = True
+                        else:
+                            sub_prep = gs.command_list[0]
+                            del gs.command_list[0]
+                            if gs.find_obj():
+                                sub_owner = gs.command_list[0]
+                                if sub_prep in gs.object_dictionary[sub_owner].sublocation_preposition:
+                                    #we are putting the object down in a sublocation.
+                                    sub_i = gs.object_dictionary[sub_owner].sublocation_index(sub_prep)
+                                    gs.object_dictionary[obj].location = gs.player_location
+                                    gs.object_dictionary[obj].sublocation = [sub_owner,sub_prep]
+                                    gs.console_output += "You place the "
+                                    gs.console_output += obj.lower()
+                                    gs.console_output += " "
+                                    gs.console_output += gs.object_dictionary[sub_owner].sublocation_text.lower()
+                                    gs.console_output += "."
+                                else:
+                                    gs.console_output += "I don't recognize where you want to put that."
+                                    output_type = "unsuccessful"
+                            else:
+                                gs.console_output += "I don't recognize where you want to put that."
+                                output_type = "unsuccessful"
+                    else:
+                        gs.console_output += "You don't have that in your inventory so you can't place it somewhere."
+                        output_type = "unsuccessful"
+                else:
+                    tot_fail()
+
+
 
             #
             #       TRAVEL!
