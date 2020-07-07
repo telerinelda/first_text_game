@@ -99,6 +99,30 @@ def game_func(command_input):
                 else:
                     gs.console_output += "I didn't recognize the name of what you're trying to look at."
                     output_type = "unsuccessful"
+            elif strip_off(["LOOK"]):
+                sub_prep = gs.command_list[0]
+                del gs.command_list[0]
+                if gs.find_obj():
+                    sub_owner = gs.command_list[0]
+                    if sub_prep in gs.object_dictionary[sub_owner].sublocation_preposition:
+                        sub_i = gs.object_dictionary[sub_owner].sublocation_index(sub_prep):
+                        gs.object_dictionary[sub_owner].sublocation_hidden = False
+                        gs.console_output += "You look " + gs.object_dictionary[sub_owner].sublocation_text.lower() + "."
+                        find_count = 0
+                        for obj in gs.object_dictionary:
+                            if gs.object_dictionary[obj].sublocation = [sub_owner,sub_prep]:
+                                find_count += 1
+                                gs.console_output += "\n" + gs.object_dictionary[obj].room_look_text
+                        if find_count == 0:
+                            gs.console_output += "\nThere doesn't seem to be anything there."
+                    else:
+                        gs.console_output += "I didn't recognize the location you're trying to look at."
+                        output_type = "unsuccessful"
+                else:
+                    gs.console_output += "I didn't recognize the location you're trying to look at."
+                    output_type = "unsuccessful"
+
+
 
             #
             #       PICK UP
