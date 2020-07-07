@@ -99,28 +99,42 @@ def game_func(command_input):
                 else:
                     gs.console_output += "I didn't recognize the name of what you're trying to look at."
                     output_type = "unsuccessful"
-            elif strip_off(["LOOK"]):
-                sub_prep = gs.command_list[0]
-                del gs.command_list[0]
-                if gs.find_obj():
-                    sub_owner = gs.command_list[0]
-                    if sub_prep in gs.object_dictionary[sub_owner].sublocation_preposition:
-                        sub_i = gs.object_dictionary[sub_owner].sublocation_index(sub_prep):
-                        gs.object_dictionary[sub_owner].sublocation_hidden = False
-                        gs.console_output += "You look " + gs.object_dictionary[sub_owner].sublocation_text.lower() + "."
-                        find_count = 0
-                        for obj in gs.object_dictionary:
-                            if gs.object_dictionary[obj].sublocation = [sub_owner,sub_prep]:
-                                find_count += 1
-                                gs.console_output += "\n" + gs.object_dictionary[obj].room_look_text
-                        if find_count == 0:
-                            gs.console_output += "\nThere doesn't seem to be anything there."
+            elif gs.strip_off(["LOOK"]) or gs.strip_off(["PEER"]):
+                if gs.strip_off(["AROUND"]):
+                    gs.command_list = ["LOOK", "AT", "ROOM"]
+                    loop_again = True
+                elif gs.strip_off(["THROUGH"]):
+                    if gs.find_obj() and gs.command_list[0] in gs.pathways_dictionary:
+                        gs.console_output += gs.pathways_dictionary[gs.command_list[0]].look_thru_text[
+                        gs.player_loation]
                     else:
-                        gs.console_output += "I didn't recognize the location you're trying to look at."
+                        gs.console_output += "You can generally only look through pathways that lead to other locations (such as doorways.)"
                         output_type = "unsuccessful"
                 else:
-                    gs.console_output += "I didn't recognize the location you're trying to look at."
-                    output_type = "unsuccessful"
+                    sub_prep = gs.command_list[0]
+                    del gs.command_list[0]
+                    if gs.find_obj():
+                        sub_owner = gs.command_list[0]
+                        if sub_prep in gs.object_dictionary[sub_owner].sublocation_preposition:
+                            sub_i = gs.object_dictionary[sub_owner].sublocation_index(sub_prep)
+                            gs.object_dictionary[sub_owner].sublocation_hidden = False
+                            gs.console_output += "You look "
+                            gs.console_output += gs.object_dictionary[sub_owner].sublocation_text.lower()
+                            gs.console_output += "."
+                            find_count = 0
+                            for obj in gs.object_dictionary:
+                                if gs.object_dictionary[obj].sublocation == [sub_owner,sub_prep]:
+                                    find_count += 1
+                                    gs.console_output += "\n"
+                                    gs.console_output += gs.object_dictionary[obj].room_look_text["default"]
+                            if find_count == 0:
+                                gs.console_output += "\nThere doesn't seem to be anything there."
+                        else:
+                            gs.console_output += "I didn't recognize what you're trying to look at."
+                            output_type = "unsuccessful"
+                    else:
+                        gs.console_output += "I didn't recognize what you're trying to look at."
+                        output_type = "unsuccessful"
 
 
 
@@ -259,16 +273,6 @@ def game_func(command_input):
             #
             #   MISC
             #
-            elif gs.strip_off(["LOOK", "AROUND"]):
-                gs.command_list = ["LOOK", "AT", "ROOM"]
-                loop_again = True
-
-            elif gs.strip_off(["LOOK", "THROUGH"]) or gs.strip_off(["PEER", "THROUGH"]):
-                if gs.find_obj() and gs.command_list[0] in gs.pathways_dictionary:
-                    gs.console_output += gs.pathways_dictionary[gs.command_list[0]].look_thru_text[gs.player_location]
-                else:
-                    gs.console_output += "You can generally only look through pathways that lead to other locations (such as doorways.)"
-                    output_type = "unsuccessful"
 
             elif gs.strip_off(["GO", "THROUGH"]) or gs.strip_off(["PASS", "THROUGH"]):
                 if gs.find_obj():
