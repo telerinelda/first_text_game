@@ -142,10 +142,11 @@ def game_func(command_input):
             #       PICK UP
             #
             elif gs.strip_off(["PICK", "UP"]) or gs.strip_off(["GET"]) or gs.strip_off(["TAKE"]):
-                if gs.find_obj():
+                if gs.find_obj() and not gs.object_dictionary[gs.command_list[0]].is_hidden(gs):
                     if gs.object_dictionary[gs.command_list[0]].location != "INVENTORY":
                         if gs.object_dictionary[gs.command_list[0]].can_pick_up:
                             gs.object_dictionary[gs.command_list[0]].location = "INVENTORY"
+                            gs.object_dictionary[gs.command_list[0]].sublocation = []
                             output_type = "success"
                         else:
                             output_type = "unsuccessful"

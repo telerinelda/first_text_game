@@ -54,8 +54,8 @@ def add_object_data(gs):
 
     #sample doorway:
     door = Pathway("DOOR")
-    door.location = "ROOM 1"
-    door.location2 = "ROOM 2"
+    door.location = "ROOM 2"
+    door.location2 = "ROOM 1"
     door.look_text = {"ROOM 1":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room 2.",
                       "ROOM 2":"You inspect the door.  It is a heavy wooden door with no keyhole. The door leads to room 1."}
     door.room_look_text = {"default":"There is a door."}
@@ -94,7 +94,7 @@ def add_object_data(gs):
     gs.object_dictionary[table.name] = table
 
     #  Sublocation example:  We make "on the table" a place you can put things.
-    table.add_sublocation(preposition="ON",text="On the table",hidden=False)
+    table.add_sublocation(preposition="ON",text="On the table",hidden=True)
 
     #  Sample Transitive Object: a hammer is a transitive object.  to use it you must use it ON something.
     hammer = Thing("HAMMER")
