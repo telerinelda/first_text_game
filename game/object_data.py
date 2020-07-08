@@ -91,7 +91,7 @@ def add_object_data(gs):
     hammer.room_look_text = {"default": "There is a hammer."}
     hammer.pick_up_text = {"default": "You pick up the hammer."}
     hammer.use_text = {"default": "Thunk!",
-                       "ROCK": "You carefully aim the hammer and strike the rock.  Crack!  The rock does not break."}
+                       "ROCK": "You carefully aim the hammer and strike the rock.  KABLOOEY!  You smash the rock into a fine dust."}
     hammer.drop_text = {"default": "You place the hammer down."}
     hammer.go_to_text = {"default": "You approach the hammer.  It does not respond."}
     gs.object_dictionary[hammer.name] = hammer

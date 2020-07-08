@@ -219,7 +219,7 @@ def game_func(command_input):
             #
             #       TRAVEL!
             #
-            elif gs.strip_off(["GO", "TO"]) or gs.strip_off(["WALK", "TO"]) or gs.strip_off(["ENTER"]) or gs.strip_off(["GO", "INTO"]) or gs.strip_off(["APPROACH"]):
+            elif gs.strip_off(["GO", "TO"]) or gs.strip_off(["WALK", "TO"]) or gs.strip_off(["ENTER"]) or gs.strip_off(["GO", "INTO"]) or gs.strip_off(["APPROACH"]) or gs.strip_off(["GOTO"]):
                 if gs.find_obj():  # this only searches the current location and the inventory
                     if not gs.object_dictionary[gs.command_list[0]].is_location:
                        # user said go to an object rather than a location
@@ -266,6 +266,11 @@ def game_func(command_input):
                                     if object2 in gs.object_dictionary[object1].use_text:
                                         gs.console_output += gs.object_dictionary[object1].use_text[object2]
                                         output_type = "success"
+                                        #This is a place where it's likely that progress points are established.
+                                        #Here's an example:
+                                        if object1 == "HAMMER" and object2 == "ROCK":
+                                            gs.progress.add("hit rock")
+                                            gs.object_dictionary["ROCK"].location = "NOWHERE"
                                     else:
                                         #no designated use text for the target
                                         gs.console_output += gs.object_dictionary[object1].use_text["default"]
