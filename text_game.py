@@ -110,6 +110,9 @@ def game_func(command_input):
                     else:
                         gs.console_output += "You can generally only look through pathways that lead to other locations (such as doorways.)"
                         output_type = "unsuccessful"
+                elif gs.strip_off(["IN","INVENTORY"]):
+                    gs.command_list = ["LOOK","AT","INVENTORY"]
+                    loop_again = True
                 elif len(gs.command_list):
                     sub_prep = gs.command_list[0]
                     del gs.command_list[0]
