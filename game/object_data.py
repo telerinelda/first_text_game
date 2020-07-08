@@ -1,30 +1,8 @@
 from game import Thing, Place, Pathway
 
-def subseq_replace(comlist, find, replace):
-    #print(range(len(comlist)))
-    for i in range(len(comlist)):
-        #print(comlist[i:i + len(find)])
-        if comlist[i:i + len(find)] == find:
-            del comlist[i:i + len(find)]
-            comlist.insert(i,replace)
-            break
-    return comlist
 
-def replacements(comlist):
-    #this needs to find subsequences and replace them with single items....
-    #it will call subseq_replace, defined above, once for each replacement.
-    comlist = subseq_replace(comlist,["DOOR","WAY"],"DOOR")
-    comlist = subseq_replace(comlist,["GREAT","TOOL"],"HAMMER")
-    comlist = subseq_replace(comlist, ["ROOM", "1"], "ROOM 1")
-    comlist = subseq_replace(comlist, ["ROOM", "2"], "ROOM 2")
-    comlist = subseq_replace(comlist, ["ROOM", "ONE"], "ROOM 1")
-    comlist = subseq_replace(comlist, ["ROOM", "TWO"], "ROOM 2")
-
-
-    return comlist
 
 def add_object_data(gs):
-
     # ---------------------------------------------------------------------------------------------
     #  Game Objects and Locations
     # ---------------------------------------------------------------------------------------------
@@ -38,6 +16,10 @@ def add_object_data(gs):
     #room1.drop_text = {"default": ""}  # This is only needed if you can put it in your inventory.
     room1.go_to_text = {"default": "You enter room # 1."}
     gs.object_dictionary[room1.name] = room1
+    #next we set up some alternate names
+    gs.multiword.append([["ROOM1"],"ROOM 1"])
+    gs.multiword.append([["ROOM","1"],"ROOM 1"])
+    gs.multiword.append([["ROOM","ONE"],"ROOM 1"])
 
     #  Sample Location 2:
     room2 = Place("ROOM 2")
@@ -48,6 +30,9 @@ def add_object_data(gs):
     #room2.drop_text = {"default": ""}  # This is only needed if you can put it in your inventory.
     room2.go_to_text = {"default": "You enter room # 2."}
     gs.object_dictionary[room2.name] = room2
+    gs.multiword.append([["ROOM2"],"ROOM 2"])
+    gs.multiword.append([["ROOM","2"],"ROOM 2"])
+    gs.multiword.append([["ROOM","TWO"],"ROOM 2"])
 
     # list connections between locations here. (DNU! old way)
     #connections = [{"ROOM 1", "ROOM 2"}]

@@ -1,6 +1,6 @@
 from game import Thing, Place, Pathway
 from game import tg_gui
-from game import gameState, add_object_data, replacements
+from game import gameState, add_object_data
 
 gs = gameState() #load the initial values for a new game.
 gs = add_object_data(gs)
@@ -26,7 +26,7 @@ def game_func(command_input):
         gs.command_counter += 1 #gets reversed later if the command is invalid.
         gs.console_output = "" #everything below adds to this and then it gets returned.
         output_type = "neutral" #default response type.
-        gs.command_list = replacements(command_input.upper().replace(".", "").replace(",", "").split())
+        gs.command_list = gs.replacements(command_input.upper().replace(".", "").replace(",", "").split())
         gs.command_list[:] = [x for x in gs.command_list if x not in ["A", "THE", "MY", "THIS"]]  # remove fluff
         loop_again = True
         while loop_again:
