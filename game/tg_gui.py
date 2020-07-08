@@ -70,7 +70,7 @@ def play_sound(tg, sound_type = "neutral"):
         sound_file = "sounds/Zeldasound.Wav"
     elif sound_type == "death":
         sound_file = "sounds/death.Wav"
-    elif sound_type == "victory":
+    elif sound_type =="victory":
         sound_file = "sounds/victory.Wav"
     if sound_file != "":
         tg.playSound(sound_file)
