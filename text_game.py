@@ -36,7 +36,7 @@ def game_func(command_input):
             #       LOOK AT
             #
             if gs.strip_off(["LOOK", "AT"]) or gs.strip_off(["WATCH"]):
-                if gs.find_obj():
+                if len(gs.command_list) and gs.find_obj():
                     if not gs.object_dictionary[gs.command_list[0]].is_location:
                         # the thing we're looking at is an object, not a location.
                         # if it is a pathway we modulate the description based on which location we're in
@@ -80,7 +80,7 @@ def game_func(command_input):
                                     gs.console_output += "\n"
                                     gs.console_output += gs.object_dictionary[obj].room_look_text["default"]
 
-                elif gs.command_list[0] == "INVENTORY":
+                elif len(gs.command_list) and gs.command_list[0] == "INVENTORY":
                     gs.console_output += "Here's a list of the things in your inventory:\n"
                     for obj in gs.object_dictionary:
                         if gs.object_dictionary[obj].location == "INVENTORY":
@@ -110,7 +110,7 @@ def game_func(command_input):
                     else:
                         gs.console_output += "You can generally only look through pathways that lead to other locations (such as doorways.)"
                         output_type = "unsuccessful"
-                else:
+                elif len(gs.command_list):
                     sub_prep = gs.command_list[0]
                     del gs.command_list[0]
                     if gs.find_obj():
@@ -135,6 +135,9 @@ def game_func(command_input):
                     else:
                         gs.console_output += "I didn't recognize what you're trying to look at."
                         output_type = "unsuccessful"
+                else:
+                    gs.console_output += "I didn't recognize what you're trying to look at."
+                    output_type = "unsuccessful"
 
 
 
@@ -290,7 +293,7 @@ def game_func(command_input):
             #
             #   SPECIAL VERBS
             #
-            elif gs.command_list[0] in gs.special_verbs:
+            elif len(gs.command_list) and gs.command_list[0] in gs.special_verbs:
                 object1 = gs.special_verbs[gs.command_list[0]]
                 del gs.command_list[0]
                 if gs.find_obj():
