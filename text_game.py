@@ -271,6 +271,7 @@ def game_func(command_input):
                                         if object1 == "HAMMER" and object2 == "ROCK":
                                             gs.progress.add("hit rock")
                                             gs.object_dictionary["ROCK"].location = "NOWHERE"
+                                            output_type = "zelda"
                                     else:
                                         #no designated use text for the target
                                         gs.console_output += gs.object_dictionary[object1].use_text["default"]
